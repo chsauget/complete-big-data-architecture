@@ -1,0 +1,17 @@
+{
+	"name": "Synapse Link - Posts",
+	"properties": {
+		"content": {
+			"query": "/*CREATE CREDENTIAL AppCosmosCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xxxxxx';*/\n\nSELECT TOP 10 *\nFROM OPENROWSET( \n       PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=appcosmos;Database=StackOverflow',\n      OBJECT = 'Posts',\n      SERVER_CREDENTIAL = 'AppCosmosCredential'\n        ) as documents",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "Built-in",
+				"databaseName": "master"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
