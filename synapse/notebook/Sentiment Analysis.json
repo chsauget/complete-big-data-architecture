@@ -12,11 +12,11 @@
 			"driverCores": 8,
 			"executorMemory": "56g",
 			"executorCores": 8,
-			"numExecutors": 2,
+			"numExecutors": 4,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2"
+				"spark.dynamicAllocation.minExecutors": "4",
+				"spark.dynamicAllocation.maxExecutors": "4"
 			}
 		},
 		"metadata": {
@@ -51,6 +51,9 @@
 		"cells": [
 			{
 				"cell_type": "code",
+				"metadata": {
+					"collapsed": false
+				},
 				"source": [
 					"from mmlspark.cognitive import *\r\n",
 					"from notebookutils import mssparkutils\r\n",
@@ -72,14 +75,15 @@
 					"\r\n",
 					"results = sentiment.transform(df)\r\n",
 					"\r\n",
+					"final = results\\\r\n",
+					"    .select(\"Body\",\"id\", explode(\"output\").alias(\"exploded\"), \"error\")\\\r\n",
+					"    .select(\"Body\",\"id\", \"exploded.*\", \"error\")\\\r\n",
 					"# Show the results\r\n",
-					"display(results\\\r\n",
-					"    .select(\"Body\", explode(\"output\").alias(\"exploded\"), \"error\")\\\r\n",
-					"    .select(\"Body\", \"exploded.*\", \"error\")\\\r\n",
-					"    .limit(10))\r\n",
+					"display(final.limit(10))\r\n",
+					"\r\n",
 					""
 				],
-				"execution_count": 4
+				"execution_count": 22
 			},
 			{
 				"cell_type": "code",
@@ -97,7 +101,26 @@
 				},
 				"source": [
 					"spark.sql(\"DROP TABLE IF EXISTS PostsWithSentiments\"); \r\n",
-					"results.write.saveAsTable(\"PostsWithSentiments\");"
+					""
+				],
+				"execution_count": 6
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"final.write.saveAsTable(\"PostsWithSentiments\");"
 				],
 				"execution_count": null
 			}
