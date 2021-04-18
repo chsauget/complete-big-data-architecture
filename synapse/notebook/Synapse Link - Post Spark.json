@@ -95,9 +95,10 @@
 					"collapsed": true
 				},
 				"source": [
+					"spark.sql(\"DROP TABLE IF EXISTS Posts\"); \r\n",
 					"df.write.saveAsTable(\"Posts\");"
 				],
-				"execution_count": 4
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
