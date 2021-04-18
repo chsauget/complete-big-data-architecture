@@ -1,0 +1,10 @@
+{
+	"name": "akv_app",
+	"properties": {
+		"annotations": [],
+		"type": "AzureKeyVault",
+		"typeProperties": {
+			"baseUrl": "https://akv-app.vault.azure.net/"
+		}
+	}
+}
