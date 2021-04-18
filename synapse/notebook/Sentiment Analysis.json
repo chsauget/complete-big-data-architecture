@@ -78,12 +78,13 @@
 					"final = results\\\r\n",
 					"    .select(\"Body\",\"id\", explode(\"output\").alias(\"exploded\"), \"error\")\\\r\n",
 					"    .select(\"Body\",\"id\", \"exploded.*\", \"error\")\\\r\n",
+					"    .limit(100)\r\n",
 					"# Show the results\r\n",
-					"display(final.limit(10))\r\n",
+					"display(final)\r\n",
 					"\r\n",
 					""
 				],
-				"execution_count": 22
+				"execution_count": 25
 			},
 			{
 				"cell_type": "code",
@@ -103,7 +104,7 @@
 					"spark.sql(\"DROP TABLE IF EXISTS PostsWithSentiments\"); \r\n",
 					""
 				],
-				"execution_count": 6
+				"execution_count": 23
 			},
 			{
 				"cell_type": "code",
@@ -122,7 +123,7 @@
 				"source": [
 					"final.write.saveAsTable(\"PostsWithSentiments\");"
 				],
-				"execution_count": null
+				"execution_count": 24
 			}
 		]
 	}
