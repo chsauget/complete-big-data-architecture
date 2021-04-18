@@ -22,380 +22,7 @@
 		"metadata": {
 			"saveOutput": true,
 			"synapse_widget": {
-				"version": "0.1",
-				"state": {
-					"8fc70a2f-3fd5-4197-b507-4f8da788984b": {
-						"type": "Synapse.DataFrame",
-						"sync_state": {
-							"table": {
-								"rows": [
-									{
-										"Body": "<p>I want to use a <code>Track-Bar</code> to change a <code>Form</code>'s opacity.</p>\n\n<p>This is my code:</p>\n\n<pre class=\"lang-cs prettyprint-override\"><code>decimal trans = trackBar1.Value / 5000;\nthis.Opacity = trans;\n</code></pre>\n\n<p>When I build the application, it gives the following error:</p>\n\n<blockquote>\n  <p>Cannot implicitly convert type <code>decimal</code> to <code>double</code></p>\n</blockquote>\n\n<p>I have tried using <code>trans</code> and <code>double</code> but then the <code>Control</code> doesn't work. This code worked fine in a past VB.NET project.</p>\n",
-										"sentiment": "mixed",
-										"sentences": [
-											{
-												"sentiment": "negative",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.23,
-													"negative": 0.76
-												},
-												"text": "<p>I want to use a <code>Track-Bar</code> to change a <code>Form</code>'s opacity.</p>\n\n<p>This is my code:</p>\n\n<pre class=\"lang-cs prettyprint-override\"><code>decimal trans = trackBar1.Value / 5000;\nthis.Opacity = trans;\n</code></pre>\n\n<p>When I build the application, it gives the following error:</p>\n\n<blockquote>\n  <p>Cannot implicitly convert type <code>decimal</code> to <code>double</code></p>\n</blockquote>\n\n<p>I have tried using <code>trans</code> and <code>double</code> but then the <code>Control</code> doesn't work.",
-												"offset": 0,
-												"length": 530
-											},
-											{
-												"sentiment": "positive",
-												"confidenceScores": {
-													"positive": 0.99,
-													"neutral": 0,
-													"negative": 0.01
-												},
-												"text": "This code worked fine in a past VB.NET project.</p>",
-												"offset": 531,
-												"length": 51
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>I have an absolutely positioned <code>div</code> containing several children, one of which is a relatively positioned <code>div</code>. When I use a <code>percentage-based width</code> on the child <code>div</code>, it collapses to <code>0 width</code> on IE7, but not on Firefox or Safari.</p>\n\n<p>If I use <code>pixel width</code>, it works. If the parent is relatively positioned, the percentage width on the child works.</p>\n\n<ol>\n<li>Is there something I'm missing here?</li>\n<li>Is there an easy fix for this besides the <code>pixel-based width</code> on the\nchild?</li>\n<li>Is there an area of the CSS specification that covers this?</li>\n</ol>\n",
-										"sentiment": "mixed",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.84,
-													"negative": 0.15
-												},
-												"text": "<p>I have an absolutely positioned <code>div</code> containing several children, one of which is a relatively positioned <code>div</code>.",
-												"offset": 0,
-												"length": 138
-											},
-											{
-												"sentiment": "negative",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 0.01,
-													"negative": 0.99
-												},
-												"text": "When I use a <code>percentage-based width</code> on the child <code>div</code>, it collapses to <code>0 width</code> on IE7, but not on Firefox or Safari.</p>\n\n<p>If I use <code>pixel width</code>, it works.",
-												"offset": 139,
-												"length": 207
-											},
-											{
-												"sentiment": "positive",
-												"confidenceScores": {
-													"positive": 0.98,
-													"neutral": 0,
-													"negative": 0.02
-												},
-												"text": "If the parent is relatively positioned, the percentage width on the child works.</p>\n\n<ol>\n<li>Is there something I'm missing here?</li>\n<li>Is there an easy fix for this besides the <code>pixel-based width</code> on the\nchild?</li>\n<li>Is there an area of the CSS specification that covers this?</li>\n</ol>",
-												"offset": 347,
-												"length": 307
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>An explicit cast to <code>double</code> like this isn't necessary:</p>\n\n<pre><code>double trans = (double) trackBar1.Value / 5000.0;\n</code></pre>\n\n<p>Identifying the constant as <code>5000.0</code> (or as <code>5000d</code>) is sufficient:</p>\n\n<pre><code>double trans = trackBar1.Value / 5000.0;\ndouble trans = trackBar1.Value / 5000d;\n</code></pre>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.92,
-													"negative": 0.07
-												},
-												"text": "<p>An explicit cast to <code>double</code> like this isn't necessary:</p>\n\n<pre><code>double trans = (double) trackBar1.Value / 5000.0;\n</code></pre>\n\n<p>Identifying the constant as <code>5000.0</code> (or as <code>5000d</code>) is sufficient:</p>\n\n<pre><code>double trans = trackBar1.Value / 5000.0;\ndouble trans = trackBar1.Value / 5000d;\n</code></pre>",
-												"offset": 0,
-												"length": 354
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>Given a <code>DateTime</code> representing a person's birthday, how do I calculate their age in years?  </p>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.97,
-													"negative": 0.02
-												},
-												"text": "<p>Given a <code>DateTime</code> representing a person's birthday, how do I calculate their age in years?",
-												"offset": 0,
-												"length": 105
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.02,
-													"neutral": 0.96,
-													"negative": 0.02
-												},
-												"text": "</p>",
-												"offset": 107,
-												"length": 4
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>Given a specific <code>DateTime</code> value, how do I display relative time, like:</p>\n\n<ul>\n<li>2 hours ago</li>\n<li>3 days ago</li>\n<li>a month ago</li>\n</ul>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.96,
-													"negative": 0.03
-												},
-												"text": "<p>Given a specific <code>DateTime</code> value, how do I display relative time, like:</p>\n\n<ul>\n<li>2 hours ago</li>\n<li>3 days ago</li>\n<li>a month ago</li>\n</ul>",
-												"offset": 0,
-												"length": 164
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>Here's how I do it</p>\n\n<pre class=\"lang-csharp prettyprint-override\"><code>var ts = new TimeSpan(DateTime.UtcNow.Ticks - dt.Ticks);\ndouble delta = Math.Abs(ts.TotalSeconds);\n\nif (delta &lt; 60)\n{\n  return ts.Seconds == 1 ? \"one second ago\" : ts.Seconds + \" seconds ago\";\n}\nif (delta &lt; 120)\n{\n  return \"a minute ago\";\n}\nif (delta &lt; 2700) // 45 * 60\n{\n  return ts.Minutes + \" minutes ago\";\n}\nif (delta &lt; 5400) // 90 * 60\n{\n  return \"an hour ago\";\n}\nif (delta &lt; 86400) // 24 * 60 * 60\n{\n  return ts.Hours + \" hours ago\";\n}\nif (delta &lt; 172800) // 48 * 60 * 60\n{\n  return \"yesterday\";\n}\nif (delta &lt; 2592000) // 30 * 24 * 60 * 60\n{\n  return ts.Days + \" days ago\";\n}\nif (delta &lt; 31104000) // 12 * 30 * 24 * 60 * 60\n{\n  int months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));\n  return months &lt;= 1 ? \"one month ago\" : months + \" months ago\";\n}\nint years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));\nreturn years &lt;= 1 ? \"one year ago\" : years + \" years ago\";\n</code></pre>\n\n<p>Suggestions? Comments? Ways to improve this algorithm?</p>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 1,
-													"negative": 0
-												},
-												"text": "<p>Here's how I do it</p>\n\n<pre class=\"lang-csharp prettyprint-override\"><code>var ts = new TimeSpan(DateTime.UtcNow.Ticks - dt.Ticks);\ndouble delta = Math.Abs(ts.TotalSeconds);\n\nif (delta &lt; 60)\n{\n  return ts.Seconds == 1 ?",
-												"offset": 0,
-												"length": 226
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 0.99,
-													"negative": 0.01
-												},
-												"text": "\"one second ago\" : ts.Seconds + \" seconds ago\";\n}\nif (delta &lt; 120)\n{\n  return \"a minute ago\";\n}\nif (delta &lt; 2700) // 45 * 60\n{\n  return ts.Minutes + \" minutes ago\";\n}\nif (delta &lt; 5400) // 90 * 60\n{\n  return \"an hour ago\";\n}\nif (delta &lt; 86400) // 24 * 60 * 60\n{\n  return ts.Hours + \" hours ago\";\n}\nif (delta &lt; 172800) // 48 * 60 * 60\n{\n  return \"yesterday\";\n}\nif (delta &lt; 2592000) // 30 * 24 * 60 * 60\n{\n  return ts.Days + \" days ago\";\n}\nif (delta &lt; 31104000) // 12 * 30 * 24 * 60 * 60\n{\n  int months = Convert.ToInt32(Math.Floor((double)ts.Days / 30));\n  return months &lt;= 1 ?",
-												"offset": 227,
-												"length": 599
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 1,
-													"negative": 0
-												},
-												"text": "\"one month ago\" : months + \" months ago\";\n}\nint years = Convert.ToInt32(Math.Floor((double)ts.Days / 365));\nreturn years &lt;= 1 ?",
-												"offset": 827,
-												"length": 130
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.02,
-													"neutral": 0.98,
-													"negative": 0
-												},
-												"text": "\"one year ago\" : years + \" years ago\";\n</code></pre>\n\n<p>Suggestions?",
-												"offset": 958,
-												"length": 69
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.13,
-													"neutral": 0.81,
-													"negative": 0.06
-												},
-												"text": "Comments?",
-												"offset": 1028,
-												"length": 9
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.4,
-													"neutral": 0.57,
-													"negative": 0.03
-												},
-												"text": "Ways to improve this algorithm?</p>",
-												"offset": 1038,
-												"length": 35
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>Is there a standard way for a web server to be able to determine a user's timezone within a web page? </p>\n\n<p>Perhaps from an HTTP header or part of the <code>user-agent</code> string?</p>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 1,
-													"negative": 0
-												},
-												"text": "<p>Is there a standard way for a web server to be able to determine a user's timezone within a web page?",
-												"offset": 0,
-												"length": 104
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 0.99,
-													"negative": 0.01
-												},
-												"text": "</p>\n\n<p>Perhaps from an HTTP header or part of the <code>user-agent</code> string?</p>",
-												"offset": 105,
-												"length": 87
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>What is the difference between <a href=\"http://msdn.microsoft.com/en-us/library/9a6a2sxy.aspx\" rel=\"noreferrer\"><code>Math.Floor()</code></a> and <a href=\"http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx\" rel=\"noreferrer\"><code>Math.Truncate()</code></a> in .NET?</p>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.02,
-													"neutral": 0.97,
-													"negative": 0.01
-												},
-												"text": "<p>What is the difference between <a href=\"http://msdn.microsoft.com/en-us/library/9a6a2sxy.aspx\" rel=\"noreferrer\"><code>Math.Floor()</code></a> and <a href=\"http://msdn.microsoft.com/en-us/library/system.math.truncate.aspx\" rel=\"noreferrer\"><code>Math.Truncate()</code></a> in .NET?</p>",
-												"offset": 0,
-												"length": 287
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>How do you expose a LINQ query as an ASMX web service? Usually, from the business tier, I can return a typed <code>DataSet</code> or <code>DataTable</code> which can be serialized for transport over ASMX.</p>\n\n<p>How can I do the same for a LINQ query? Is there a way to populate a typed <code>DataSet</code> or <code>DataTable</code> via a LINQ query?</p>\n\n<pre><code>public static MyDataTable CallMySproc()\n{\n    string conn = \"...\";\n\n    MyDatabaseDataContext db = new MyDatabaseDataContext(conn);\n    MyDataTable dt = new MyDataTable();\n\n    // execute a sproc via LINQ\n    var query = from dr\n                in db.MySproc().AsEnumerable\n                select dr;\n\n    // copy LINQ query resultset into a DataTable -this does not work !    \n    dt = query.CopyToDataTable();\n\n    return dt;\n}\n</code></pre>\n\n<p>How can I get the result set of a LINQ query into a <code>DataSet</code> or <code>DataTable</code>? Alternatively, is the LINQ query serializable so that I can expose it as an ASMX web service?</p>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 1,
-													"negative": 0
-												},
-												"text": "<p>How do you expose a LINQ query as an ASMX web service?",
-												"offset": 0,
-												"length": 57
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.98,
-													"negative": 0.01
-												},
-												"text": "Usually, from the business tier, I can return a typed <code>DataSet</code> or <code>DataTable</code> which can be serialized for transport over ASMX.</p>\n\n<p>How can I do the same for a LINQ query?",
-												"offset": 58,
-												"length": 197
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0.01,
-													"neutral": 0.8,
-													"negative": 0.19
-												},
-												"text": "Is there a way to populate a typed <code>DataSet</code> or <code>DataTable</code> via a LINQ query?</p>\n\n<pre><code>public static MyDataTable CallMySproc()\n{\n    string conn = \"...\";\n\n    MyDatabaseDataContext db = new MyDatabaseDataContext(conn);\n    MyDataTable dt = new MyDataTable();\n\n    // execute a sproc via LINQ\n    var query = from dr\n                in db.MySproc().AsEnumerable\n                select dr;\n\n    // copy LINQ query resultset into a DataTable -this does not work !",
-												"offset": 256,
-												"length": 489
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 1,
-													"negative": 0
-												},
-												"text": "dt = query.CopyToDataTable();\n\n    return dt;\n}\n</code></pre>\n\n<p>How can I get the result set of a LINQ query into a <code>DataSet</code> or <code>DataTable</code>?",
-												"offset": 754,
-												"length": 165
-											},
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 1,
-													"negative": 0
-												},
-												"text": "Alternatively, is the LINQ query serializable so that I can expose it as an ASMX web service?</p>",
-												"offset": 920,
-												"length": 97
-											}
-										],
-										"warnings": []
-									},
-									{
-										"Body": "<p>How do I store binary data in <a href=\"http://en.wikipedia.org/wiki/MySQL\" rel=\"noreferrer\">MySQL</a>?</p>\n",
-										"sentiment": "neutral",
-										"sentences": [
-											{
-												"sentiment": "neutral",
-												"confidenceScores": {
-													"positive": 0,
-													"neutral": 0.99,
-													"negative": 0.01
-												},
-												"text": "<p>How do I store binary data in <a href=\"http://en.wikipedia.org/wiki/MySQL\" rel=\"noreferrer\">MySQL</a>?</p>",
-												"offset": 0,
-												"length": 109
-											}
-										],
-										"warnings": []
-									}
-								],
-								"schema": {
-									"Body": "string",
-									"sentiment": "string",
-									"statistics": "StructType(StructField(charactersCount,IntegerType,false), StructField(transactionsCount,IntegerType,false))",
-									"documentScores": "StructType(StructField(positive,DoubleType,false), StructField(neutral,DoubleType,false), StructField(negative,DoubleType,false))",
-									"sentences": "ArrayType(StructType(StructField(text,StringType,true), StructField(sentiment,StringType,true), StructField(confidenceScores,StructType(StructField(positive,DoubleType,false), StructField(neutral,DoubleType,false), StructField(negative,DoubleType,false)),true), StructField(offset,IntegerType,false), StructField(length,IntegerType,false)),true)",
-									"warnings": "ArrayType(StructType(StructField(code,StringType,true), StructField(message,StringType,true), StructField(targetRef,StringType,true)),true)",
-									"error-message": "string",
-									"error": "StructType(StructField(response,StringType,true), StructField(status,StructType(StructField(protocolVersion,StructType(StructField(protocol,StringType,true), StructField(major,IntegerType,false), StructField(minor,IntegerType,false)),true), StructField(statusCode,IntegerType,false), StructField(reasonPhrase,StringType,true)),true))"
-								}
-							},
-							"isSummary": false,
-							"language": "scala"
-						},
-						"persist_state": {
-							"view": {
-								"type": "details",
-								"chartOptions": {
-									"chartType": "bar",
-									"aggregationType": "count",
-									"categoryFieldKeys": [
-										"Body"
-									],
-									"seriesFieldKeys": [
-										"Body"
-									],
-									"isStacked": false
-								}
-							}
-						}
-					}
-				}
+				"version": "0.1"
 			},
 			"kernelspec": {
 				"name": "synapse_pyspark",
@@ -497,6 +124,19 @@
 				"execution_count": 5
 			},
 			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"# Time to see an nice cognitive integration"
+				]
+			},
+			{
 				"cell_type": "code",
 				"metadata": {
 					"jupyter": {
@@ -538,7 +178,27 @@
 					"    .limit(10))\r\n",
 					""
 				],
-				"execution_count": 5
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": true
+				},
+				"source": [
+					"spark.sql(\"DROP TABLE IF EXISTS PostsWithSentiments\"); \r\n",
+					"results.write.saveAsTable(\"PostsWithSentiments\");"
+				],
+				"execution_count": 6
 			}
 		]
 	}
