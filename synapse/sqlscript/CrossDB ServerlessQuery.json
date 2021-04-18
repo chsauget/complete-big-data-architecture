@@ -1,0 +1,17 @@
+{
+	"name": "CrossDB ServerlessQuery",
+	"properties": {
+		"content": {
+			"query": "SELECT COUNT(*)\n FROM [default].[dbo].[postswithsentiments] S\n    INNER JOIN [AnalyticsDB].[dbo].[Posts] P \n        ON S.id COLLATE Latin1_General_100_BIN2_UTF8  = P.id COLLATE Latin1_General_100_BIN2_UTF8\n\n\n\n  ",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "Built-in",
+				"databaseName": "default"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
