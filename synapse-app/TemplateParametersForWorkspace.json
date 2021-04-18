@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"value": "synapse-app"
+		},
+		"CosmosDb_connectionString": {
+			"value": ""
+		},
+		"synapse-app-WorkspaceDefaultSqlServer_connectionString": {
+			"value": ""
+		},
+		"synapse-app-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://synapselakeapp.dfs.core.windows.net"
+		},
+		"akv_app_properties_typeProperties_baseUrl": {
+			"value": "https://akv-app.vault.azure.net/"
+		}
+	}
+}

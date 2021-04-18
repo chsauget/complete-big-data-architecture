@@ -1,0 +1,327 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"workspaceName": {
+			"type": "string",
+			"metadata": "Nom de l'espace de travail",
+			"defaultValue": "synapse-app"
+		},
+		"CosmosDb_connectionString": {
+			"type": "secureString",
+			"metadata": "Chaîne sécurisée pour « connectionString » de « CosmosDb »"
+		},
+		"synapse-app-WorkspaceDefaultSqlServer_connectionString": {
+			"type": "secureString",
+			"metadata": "Chaîne sécurisée pour « connectionString » de « synapse-app-WorkspaceDefaultSqlServer »"
+		},
+		"synapse-app-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://synapselakeapp.dfs.core.windows.net"
+		},
+		"akv_app_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://akv-app.vault.azure.net/"
+		}
+	},
+	"variables": {
+		"workspaceId": "[concat('Microsoft.Synapse/workspaces/', parameters('workspaceName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('workspaceName'), '/CosmosDb')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "CosmosDb",
+				"typeProperties": {
+					"connectionString": "[parameters('CosmosDb_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/synapse-app-WorkspaceDefaultSqlServer')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"parameters": {
+					"DBName": {
+						"type": "String"
+					}
+				},
+				"annotations": [],
+				"type": "AzureSqlDW",
+				"typeProperties": {
+					"connectionString": "[parameters('synapse-app-WorkspaceDefaultSqlServer_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/synapse-app-WorkspaceDefaultStorage')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureBlobFS",
+				"typeProperties": {
+					"url": "[parameters('synapse-app-WorkspaceDefaultStorage_properties_typeProperties_url')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/AutoResolveIntegrationRuntime')]",
+			"type": "Microsoft.Synapse/workspaces/integrationRuntimes",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"type": "Managed",
+				"typeProperties": {
+					"computeProperties": {
+						"location": "AutoResolve",
+						"dataFlowProperties": {
+							"computeType": "General",
+							"coreCount": 8,
+							"timeToLive": 0
+						}
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Synapse Link - Posts')]",
+			"type": "Microsoft.Synapse/workspaces/sqlscripts",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"content": {
+					"query": "/*CREATE CREDENTIAL AppCosmosCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xxxxxx';*/\n\nALTER VIEW dbo.Posts AS\nSELECT LastEditorDisplayName\n,AcceptedAnswerId\n,id\n,[CreationDate] = CAST(CreationDate AS DATETIME)\n,AnswerCount\n,CommentCount\n,CommunityOwnedDate\n,FavoriteCount\n,[LastActivityDate] = CAST(LastActivityDate AS DATETIME)\n,LastEditDate\n,LastEditorUserId\n,OwnerUserId\n,ParentId\n,PostTypeId\n,Score\n,Tags\n,Title\n,ViewCount\n,[ExtractionDate] = CAST(LEFT(ExtractionDate,16)+':00' AS DATETIME)\n,[ClosedDate] = CAST(ClosedDate AS DATETIME)\nFROM OPENROWSET( \n       PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=appcosmos;Database=StackOverflow',\n      OBJECT = 'Posts',\n      SERVER_CREDENTIAL = 'AppCosmosCredential'\n        ) as documents",
+					"metadata": {
+						"language": "sql"
+					},
+					"currentConnection": {
+						"poolName": "Built-in",
+						"databaseName": "Analytics"
+					},
+					"resultLimit": 5000
+				},
+				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Synapse Link - Post Spark')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "spark",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"synapse_widget": {
+						"version": "0.1",
+						"state": {}
+					},
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
+						"name": "spark",
+						"type": "Spark",
+						"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "2.4",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28,
+						"automaticScaleJobs": false
+					},
+					"sessionKeepAliveTimeout": 30
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"metadata": {},
+						"source": [
+							"df = spark.read.format(\"cosmos.olap\")\\\r\n",
+							"    .option(\"spark.synapse.linkedService\", \"CosmosDb\")\\\r\n",
+							"    .option(\"spark.cosmos.container\", \"Posts\")\\\r\n",
+							"    .load()\r\n",
+							"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"df.show()"
+						],
+						"outputs": [],
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"spark.sql(\"DROP TABLE IF EXISTS Posts\"); \r\n",
+							"df.write.saveAsTable(\"Posts\");"
+						],
+						"outputs": [],
+						"execution_count": 9
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"microsoft": {
+								"language": "sparksql"
+							},
+							"collapsed": false
+						},
+						"source": [
+							"%%sql\r\n",
+							"SELECT COUNT(*) FROM Posts"
+						],
+						"outputs": [],
+						"execution_count": 5
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": true
+						},
+						"source": [
+							"from mmlspark.cognitive import *\r\n",
+							"from notebookutils import mssparkutils\r\n",
+							"from pyspark.sql.functions import explode\r\n",
+							"\r\n",
+							"# Fetch the subscription key (or a general Cognitive Service key) from Azure Key Vault\r\n",
+							"service_key = mssparkutils.credentials.getSecret(\"akv-app\", \"cognitive-key\", \"akv_app\")\r\n",
+							"\r\n",
+							"# Load the data into a Spark DataFrame\r\n",
+							"df = spark.sql(\"SELECT * FROM default.posts\")\r\n",
+							"\r\n",
+							"sentiment = (TextSentiment()\r\n",
+							"    .setLocation(\"northeurope\")\r\n",
+							"    .setSubscriptionKey(service_key)\r\n",
+							"    .setOutputCol(\"output\")\r\n",
+							"    .setErrorCol(\"error\")\r\n",
+							"    .setLanguage(\"en\")\r\n",
+							"    .setTextCol(\"Body\"))\r\n",
+							"\r\n",
+							"results = sentiment.transform(df)\r\n",
+							"\r\n",
+							"# Show the results\r\n",
+							"display(results\\\r\n",
+							"    .select(\"Body\", explode(\"output\").alias(\"exploded\"), \"error\")\\\r\n",
+							"    .select(\"Body\", \"exploded.*\", \"error\")\\\r\n",
+							"    .limit(10))"
+						],
+						"outputs": [],
+						"execution_count": 4
+					}
+				]
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/akv_app')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "AzureKeyVault",
+				"typeProperties": {
+					"baseUrl": "[parameters('akv_app_properties_typeProperties_baseUrl')]"
+				}
+			},
+			"dependsOn": []
+		}
+	]
+}
