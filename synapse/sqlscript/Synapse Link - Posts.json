@@ -1,0 +1,17 @@
+{
+	"name": "Synapse Link - Posts",
+	"properties": {
+		"content": {
+			"query": "/*CREATE CREDENTIAL AppCosmosCredential\n    WITH IDENTITY = 'SHARED ACCESS SIGNATURE', SECRET = 'xxxxxx';*/\n\nALTER VIEW dbo.Posts AS\nSELECT LastEditorDisplayName\n,AcceptedAnswerId\n,id\n,[CreationDate] = CAST(CreationDate AS DATETIME)\n,AnswerCount\n,CommentCount\n,CommunityOwnedDate\n,FavoriteCount\n,[LastActivityDate] = CAST(LastActivityDate AS DATETIME)\n,LastEditDate\n,LastEditorUserId\n,OwnerUserId\n,ParentId\n,PostTypeId\n,Score\n,Tags\n,Title\n,ViewCount\n,[ExtractionDate] = CAST(LEFT(ExtractionDate,16)+':00' AS DATETIME)\n,[ClosedDate] = CAST(ClosedDate AS DATETIME)\nFROM OPENROWSET( \n       PROVIDER = 'CosmosDB',\n      CONNECTION = 'Account=appcosmos;Database=StackOverflow',\n      OBJECT = 'Posts',\n      SERVER_CREDENTIAL = 'AppCosmosCredential'\n        ) as documents",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "Built-in",
+				"databaseName": "Analytics"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
