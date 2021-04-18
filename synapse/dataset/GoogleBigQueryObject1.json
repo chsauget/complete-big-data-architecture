@@ -1,8 +1,0 @@
-{
-	"name": "GoogleBigQueryObject1",
-	"properties": {
-		"annotations": [],
-		"type": "GoogleBigQueryObject",
-		"schema": []
-	}
-}
