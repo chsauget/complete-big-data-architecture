@@ -59,7 +59,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 2
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -164,7 +164,7 @@
 					"    .select(\"Body\", \"exploded.*\", \"error\")\\\r\n",
 					"    .limit(10))"
 				],
-				"execution_count": 1
+				"execution_count": 4
 			}
 		]
 	}
