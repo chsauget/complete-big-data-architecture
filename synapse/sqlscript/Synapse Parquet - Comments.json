@@ -1,0 +1,17 @@
+{
+	"name": "Synapse Parquet - Comments",
+	"properties": {
+		"content": {
+			"query": "CREATE VIEW dbo.Comments AS\nSELECT\n    [year] =   r.filepath(1)\n    ,[month] = r.filepath(2)\n    ,[day] = r.filepath(3)\n    ,[h] = r.filepath(4)\n    ,[filename] = r.filepath(5)\n    ,r.*\n\nFROM\n    OPENROWSET(\n        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/comments/*/*/*/*/*.parquet',\n        FORMAT='PARQUET'\n    ) AS [r]\n",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"poolName": "Built-in",
+				"databaseName": "master"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
