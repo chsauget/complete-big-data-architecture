@@ -1,0 +1,19 @@
+{
+	"name": "SQLDW_TAXI",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapse-app-WorkspaceDefaultSqlServer",
+			"type": "LinkedServiceReference",
+			"parameters": {
+				"DBName": "sqdw"
+			}
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": [],
+		"typeProperties": {
+			"schema": "dbo",
+			"table": "taxi"
+		}
+	}
+}
