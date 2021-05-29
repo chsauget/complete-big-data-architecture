@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlDWSource",
-						"sqlReaderQuery": "SELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK     'https://azureopendatastorage.blob.core.windows.net/nyctlc/fhv/puYear=*/puMonth=*/*.parquet',\n        FORMAT = 'parquet'\n    ) AS [result];",
+						"sqlReaderQuery": "SELECT\n    TOP 100 *\nFROM\n    OPENROWSET(\n        BULK     'https://azureopendatastorage.blob.core.windows.net/nyctlc/yellow/puYear=*/puMonth=*/*.parquet',\n        FORMAT = 'parquet'\n    ) AS [result];",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -37,7 +37,7 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "SQLDW_TAXI",
+						"referenceName": "SQLOD_Taxi",
 						"type": "DatasetReference"
 					}
 				],
