@@ -1,0 +1,12 @@
+{
+	"name": "SQLOD_Taxi",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLOD_SynapseAPP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": []
+	}
+}
