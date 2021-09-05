@@ -1,0 +1,22 @@
+{
+	"name": "7z_bzip2",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapse-app-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": "stackoverflow.com-Tags.7z",
+				"folderPath": "StackOverflow/raw",
+				"fileSystem": "lake"
+			},
+			"compression": {
+				"type": "bzip2"
+			}
+		}
+	}
+}
