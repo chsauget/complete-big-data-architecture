@@ -28,7 +28,7 @@ async def main(req: func.HttpRequest) -> func.HttpResponse:
                         ORDER BY [PostId] DESC""")
 
     ##Event Hub
-    producer = EventHubProducerClient.from_connection_string(conn_str="Endpoint=sb://eventhub-app.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=yZtkyJm1v3TrN1deUrwzzrz/SwgjbvrhE5ttzfZInws="
+    producer = EventHubProducerClient.from_connection_string(conn_str=os.environ["EVENT_HUB"]
                                                                 , eventhub_name="comments-hub")
 
     event_data_batch = await producer.create_batch()

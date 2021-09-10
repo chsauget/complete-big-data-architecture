@@ -7,3 +7,4 @@ pyodbc
 azure-cosmos
 azure-eventhub
 asyncio
+py7zr
