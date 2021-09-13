@@ -19,7 +19,14 @@
 						"referenceName": "ZipXml",
 						"type": "DatasetReference",
 						"parameters": {
-							"container": "lake"
+							"container": {
+								"value": "@pipeline().parameters.Container",
+								"type": "Expression"
+							},
+							"folder": {
+								"value": "@pipeline().parameters.Folder",
+								"type": "Expression"
+							}
 						}
 					},
 					"fieldList": [
@@ -39,6 +46,10 @@
 			"Container": {
 				"type": "string",
 				"defaultValue": "lake"
+			},
+			"Folder": {
+				"type": "string",
+				"defaultValue": "StackOverflow/raw"
 			}
 		},
 		"annotations": []
