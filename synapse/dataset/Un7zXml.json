@@ -1,0 +1,17 @@
+{
+	"name": "Un7zXml",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Azure Function API",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Xml",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": "/api/SevenZip"
+			}
+		}
+	}
+}
