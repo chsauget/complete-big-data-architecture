@@ -3,43 +3,100 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Get Metadata1",
-				"type": "GetMetadata",
+				"name": "Copy - Tags",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
 					"secureOutput": false,
 					"secureInput": false
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "ZipXml",
-						"type": "DatasetReference",
-						"parameters": {
-							"container": {
-								"value": "@pipeline().parameters.Container",
-								"type": "Expression"
-							},
-							"folder": {
-								"value": "@pipeline().parameters.Folder",
-								"type": "Expression"
-							}
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET",
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
 						}
 					},
-					"fieldList": [
-						"childItems"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"enablePartitionDiscovery": false
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
 					},
-					"formatSettings": {
-						"type": "BinaryReadSettings"
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@TagName']"
+								},
+								"sink": {
+									"name": "TagName"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Count']"
+								},
+								"sink": {
+									"name": "Count"
+								}
+							},
+							{
+								"source": {
+									"path": "['@ExcerptPostId']"
+								},
+								"sink": {
+									"name": "ExcerptPostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@WikiPostId']"
+								},
+								"sink": {
+									"name": "WikiPostId"
+								}
+							}
+						],
+						"collectionReference": "$['tags']['row']"
 					}
-				}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
 		"parameters": {
