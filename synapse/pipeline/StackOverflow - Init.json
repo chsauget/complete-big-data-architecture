@@ -17,10 +17,7 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "7z_bzip2",
-						"type": "DatasetReference",
-						"parameters": {
-							"Container": "lake"
-						}
+						"type": "DatasetReference"
 					},
 					"fieldList": [
 						"childItems"
