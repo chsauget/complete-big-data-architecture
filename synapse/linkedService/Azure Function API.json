@@ -4,7 +4,7 @@
 		"annotations": [],
 		"type": "HttpServer",
 		"typeProperties": {
-			"url": "https://net-core-for-big-data.azurewebsites.net/api/SevenZip",
+			"url": "https://net-core-for-big-data.azurewebsites.net/api",
 			"enableServerCertificateValidation": true,
 			"authenticationType": "Anonymous"
 		},
