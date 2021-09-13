@@ -88,7 +88,25 @@
 				"inputs": [
 					{
 						"referenceName": "Un7zXml",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Tags.7z')",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
@@ -107,6 +125,10 @@
 			"Folder": {
 				"type": "string",
 				"defaultValue": "StackOverflow/raw"
+			},
+			"Account": {
+				"type": "string",
+				"defaultValue": "synapselakeapp"
 			}
 		},
 		"annotations": []
