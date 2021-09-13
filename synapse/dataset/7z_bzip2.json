@@ -5,12 +5,6 @@
 			"referenceName": "synapse-app-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"Container": {
-				"type": "string",
-				"defaultValue": "lake"
-			}
-		},
 		"annotations": [],
 		"type": "Binary",
 		"typeProperties": {
