@@ -3,37 +3,6 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DFT - Badges",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Get Metadata - File List",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "1.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Dataflow1",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
-			},
-			{
 				"name": "Get Metadata - File List",
 				"type": "GetMetadata",
 				"dependsOn": [],
@@ -48,14 +17,17 @@
 				"typeProperties": {
 					"dataset": {
 						"referenceName": "7z_bzip2",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"Container": "lake"
+						}
 					},
 					"fieldList": [
-						"childItems",
-						"itemName"
+						"childItems"
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -64,6 +36,12 @@
 				}
 			}
 		],
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "lake"
+			}
+		},
 		"annotations": []
 	}
 }

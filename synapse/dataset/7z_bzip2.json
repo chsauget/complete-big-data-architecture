@@ -7,10 +7,8 @@
 		},
 		"parameters": {
 			"Container": {
-				"type": "string"
-			},
-			"Directory": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "lake"
 			}
 		},
 		"annotations": [],
@@ -18,14 +16,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": {
-					"value": "@dataset().Directory",
-					"type": "Expression"
-				},
-				"fileSystem": {
-					"value": "@dataset().Container",
-					"type": "Expression"
-				}
+				"folderPath": "StackOverflow/raw",
+				"fileSystem": "lake"
 			}
 		}
 	}
