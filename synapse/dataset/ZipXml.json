@@ -16,7 +16,10 @@
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"folderPath": "StackOverflow/raw",
-				"fileSystem": "lake"
+				"fileSystem": {
+					"value": "@dataset().container",
+					"type": "Expression"
+				}
 			}
 		}
 	}
