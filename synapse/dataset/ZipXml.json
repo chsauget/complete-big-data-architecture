@@ -1,0 +1,18 @@
+{
+	"name": "ZipXml",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapse-app-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"folderPath": "StackOverflow/raw",
+				"fileSystem": "lake"
+			}
+		}
+	}
+}
