@@ -5,21 +5,13 @@
 			"referenceName": "synapse-app-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
-		"parameters": {
-			"Container": {
-				"type": "string"
-			}
-		},
 		"annotations": [],
 		"type": "Xml",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
 				"folderPath": "StackOverflow/raw",
-				"fileSystem": {
-					"value": "@dataset().Container",
-					"type": "Expression"
-				}
+				"fileSystem": "lake"
 			}
 		}
 	}
