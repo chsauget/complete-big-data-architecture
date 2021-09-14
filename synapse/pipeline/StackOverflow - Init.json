@@ -133,8 +133,7 @@
 						"type": "XmlSource",
 						"storeSettings": {
 							"type": "HttpReadSettings",
-							"requestMethod": "GET",
-							"requestTimeout": ""
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
 							"type": "XmlReadSettings",
@@ -165,38 +164,46 @@
 							},
 							{
 								"source": {
-									"path": "['@TagName']"
+									"path": "['@UserId']"
 								},
 								"sink": {
-									"name": "TagName"
+									"name": "UserId"
 								}
 							},
 							{
 								"source": {
-									"path": "['@Count']"
+									"path": "['@Name']"
 								},
 								"sink": {
-									"name": "Count"
+									"name": "Name"
 								}
 							},
 							{
 								"source": {
-									"path": "['@ExcerptPostId']"
+									"path": "['@Date']"
 								},
 								"sink": {
-									"name": "ExcerptPostId"
+									"name": "Date"
 								}
 							},
 							{
 								"source": {
-									"path": "['@WikiPostId']"
+									"path": "['@Class']"
 								},
 								"sink": {
-									"name": "WikiPostId"
+									"name": "Class"
+								}
+							},
+							{
+								"source": {
+									"path": "['@TagBased']"
+								},
+								"sink": {
+									"name": "TagBased"
 								}
 							}
 						],
-						"collectionReference": "$['tags']['row']"
+						"collectionReference": "$['badges']['row']"
 					}
 				},
 				"inputs": [
@@ -247,8 +254,7 @@
 						"type": "XmlSource",
 						"storeSettings": {
 							"type": "HttpReadSettings",
-							"requestMethod": "GET",
-							"requestTimeout": ""
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
 							"type": "XmlReadSettings",
@@ -279,38 +285,54 @@
 							},
 							{
 								"source": {
-									"path": "['@TagName']"
+									"path": "['@PostId']"
 								},
 								"sink": {
-									"name": "TagName"
+									"name": "PostId"
 								}
 							},
 							{
 								"source": {
-									"path": "['@Count']"
+									"path": "['@Score']"
 								},
 								"sink": {
-									"name": "Count"
+									"name": "Score"
 								}
 							},
 							{
 								"source": {
-									"path": "['@ExcerptPostId']"
+									"path": "['@Text']"
 								},
 								"sink": {
-									"name": "ExcerptPostId"
+									"name": "Text"
 								}
 							},
 							{
 								"source": {
-									"path": "['@WikiPostId']"
+									"path": "['@CreationDate']"
 								},
 								"sink": {
-									"name": "WikiPostId"
+									"name": "CreationDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['@UserId']"
+								},
+								"sink": {
+									"name": "UserId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@ContentLicense']"
+								},
+								"sink": {
+									"name": "ContentLicense"
 								}
 							}
 						],
-						"collectionReference": "$['tags']['row']"
+						"collectionReference": "$['comments']['row']"
 					}
 				},
 				"inputs": [
@@ -361,8 +383,7 @@
 						"type": "XmlSource",
 						"storeSettings": {
 							"type": "HttpReadSettings",
-							"requestMethod": "GET",
-							"requestTimeout": ""
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
 							"type": "XmlReadSettings",
@@ -393,38 +414,38 @@
 							},
 							{
 								"source": {
-									"path": "['@TagName']"
+									"path": "['@CreationDate']"
 								},
 								"sink": {
-									"name": "TagName"
+									"name": "CreationDate"
 								}
 							},
 							{
 								"source": {
-									"path": "['@Count']"
+									"path": "['@PostId']"
 								},
 								"sink": {
-									"name": "Count"
+									"name": "PostId"
 								}
 							},
 							{
 								"source": {
-									"path": "['@ExcerptPostId']"
+									"path": "['@RelatedPostId']"
 								},
 								"sink": {
-									"name": "ExcerptPostId"
+									"name": "RelatedPostId"
 								}
 							},
 							{
 								"source": {
-									"path": "['@WikiPostId']"
+									"path": "['@LinkTypeId']"
 								},
 								"sink": {
-									"name": "WikiPostId"
+									"name": "LinkTypeId"
 								}
 							}
 						],
-						"collectionReference": "$['tags']['row']"
+						"collectionReference": "$['postlinks']['row']"
 					}
 				},
 				"inputs": [
@@ -475,8 +496,7 @@
 						"type": "XmlSource",
 						"storeSettings": {
 							"type": "HttpReadSettings",
-							"requestMethod": "GET",
-							"requestTimeout": ""
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
 							"type": "XmlReadSettings",
@@ -507,38 +527,70 @@
 							},
 							{
 								"source": {
-									"path": "['@TagName']"
+									"path": "['@Reputation']"
 								},
 								"sink": {
-									"name": "TagName"
+									"name": "Reputation"
 								}
 							},
 							{
 								"source": {
-									"path": "['@Count']"
+									"path": "['@CreationDate']"
 								},
 								"sink": {
-									"name": "Count"
+									"name": "CreationDate"
 								}
 							},
 							{
 								"source": {
-									"path": "['@ExcerptPostId']"
+									"path": "['@DisplayName']"
 								},
 								"sink": {
-									"name": "ExcerptPostId"
+									"name": "DisplayName"
 								}
 							},
 							{
 								"source": {
-									"path": "['@WikiPostId']"
+									"path": "['@LastAccessDate']"
 								},
 								"sink": {
-									"name": "WikiPostId"
+									"name": "LastAccessDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['@AboutMe']"
+								},
+								"sink": {
+									"name": "AboutMe"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Views']"
+								},
+								"sink": {
+									"name": "Views"
+								}
+							},
+							{
+								"source": {
+									"path": "['@UpVotes']"
+								},
+								"sink": {
+									"name": "UpVotes"
+								}
+							},
+							{
+								"source": {
+									"path": "['@DownVotes']"
+								},
+								"sink": {
+									"name": "DownVotes"
 								}
 							}
 						],
-						"collectionReference": "$['tags']['row']"
+						"collectionReference": "$['users']['row']"
 					}
 				},
 				"inputs": [
@@ -589,8 +641,7 @@
 						"type": "XmlSource",
 						"storeSettings": {
 							"type": "HttpReadSettings",
-							"requestMethod": "GET",
-							"requestTimeout": ""
+							"requestMethod": "GET"
 						},
 						"formatSettings": {
 							"type": "XmlReadSettings",
@@ -621,38 +672,30 @@
 							},
 							{
 								"source": {
-									"path": "['@TagName']"
+									"path": "['@PostId']"
 								},
 								"sink": {
-									"name": "TagName"
+									"name": "PostId"
 								}
 							},
 							{
 								"source": {
-									"path": "['@Count']"
+									"path": "['@VoteTypeId']"
 								},
 								"sink": {
-									"name": "Count"
+									"name": "VoteTypeId"
 								}
 							},
 							{
 								"source": {
-									"path": "['@ExcerptPostId']"
+									"path": "['@CreationDate']"
 								},
 								"sink": {
-									"name": "ExcerptPostId"
-								}
-							},
-							{
-								"source": {
-									"path": "['@WikiPostId']"
-								},
-								"sink": {
-									"name": "WikiPostId"
+									"name": "CreationDate"
 								}
 							}
 						],
-						"collectionReference": "$['tags']['row']"
+						"collectionReference": "$['votes']['row']"
 					}
 				},
 				"inputs": [
