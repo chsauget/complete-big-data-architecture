@@ -3,67 +3,747 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "DFT - Badges",
-				"type": "ExecuteDataFlow",
-				"dependsOn": [
-					{
-						"activity": "Get Metadata - File List",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"policy": {
-					"timeout": "1.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
-					"secureOutput": false,
-					"secureInput": false
-				},
-				"userProperties": [],
-				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Dataflow1",
-						"type": "DataFlowReference"
-					},
-					"compute": {
-						"coreCount": 8,
-						"computeType": "General"
-					},
-					"traceLevel": "Fine"
-				}
-			},
-			{
-				"name": "Get Metadata - File List",
-				"type": "GetMetadata",
+				"name": "Copy - Tags",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
 					"secureOutput": false,
 					"secureInput": false
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataset": {
-						"referenceName": "7z_bzip2",
-						"type": "DatasetReference"
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET",
+							"requestTimeout": ""
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
 					},
-					"fieldList": [
-						"childItems",
-						"itemName"
-					],
-					"storeSettings": {
-						"type": "AzureBlobFSReadSettings",
-						"enablePartitionDiscovery": false
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
 					},
-					"formatSettings": {
-						"type": "BinaryReadSettings"
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@TagName']"
+								},
+								"sink": {
+									"name": "TagName"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Count']"
+								},
+								"sink": {
+									"name": "Count"
+								}
+							},
+							{
+								"source": {
+									"path": "['@ExcerptPostId']"
+								},
+								"sink": {
+									"name": "ExcerptPostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@WikiPostId']"
+								},
+								"sink": {
+									"name": "WikiPostId"
+								}
+							}
+						],
+						"collectionReference": "$['tags']['row']"
 					}
-				}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Tags.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy - Badges",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@UserId']"
+								},
+								"sink": {
+									"name": "UserId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Name']"
+								},
+								"sink": {
+									"name": "Name"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Date']"
+								},
+								"sink": {
+									"name": "Date"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Class']"
+								},
+								"sink": {
+									"name": "Class"
+								}
+							},
+							{
+								"source": {
+									"path": "['@TagBased']"
+								},
+								"sink": {
+									"name": "TagBased"
+								}
+							}
+						],
+						"collectionReference": "$['badges']['row']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Badges.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy - Comments",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@PostId']"
+								},
+								"sink": {
+									"name": "PostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Score']"
+								},
+								"sink": {
+									"name": "Score"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Text']"
+								},
+								"sink": {
+									"name": "Text"
+								}
+							},
+							{
+								"source": {
+									"path": "['@CreationDate']"
+								},
+								"sink": {
+									"name": "CreationDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['@UserId']"
+								},
+								"sink": {
+									"name": "UserId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@ContentLicense']"
+								},
+								"sink": {
+									"name": "ContentLicense"
+								}
+							}
+						],
+						"collectionReference": "$['comments']['row']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Comments.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy - PostLinks",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@CreationDate']"
+								},
+								"sink": {
+									"name": "CreationDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['@PostId']"
+								},
+								"sink": {
+									"name": "PostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@RelatedPostId']"
+								},
+								"sink": {
+									"name": "RelatedPostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@LinkTypeId']"
+								},
+								"sink": {
+									"name": "LinkTypeId"
+								}
+							}
+						],
+						"collectionReference": "$['postlinks']['row']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-PostLinks.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy - Users",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Reputation']"
+								},
+								"sink": {
+									"name": "Reputation"
+								}
+							},
+							{
+								"source": {
+									"path": "['@CreationDate']"
+								},
+								"sink": {
+									"name": "CreationDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['@DisplayName']"
+								},
+								"sink": {
+									"name": "DisplayName"
+								}
+							},
+							{
+								"source": {
+									"path": "['@LastAccessDate']"
+								},
+								"sink": {
+									"name": "LastAccessDate"
+								}
+							},
+							{
+								"source": {
+									"path": "['@AboutMe']"
+								},
+								"sink": {
+									"name": "AboutMe"
+								}
+							},
+							{
+								"source": {
+									"path": "['@Views']"
+								},
+								"sink": {
+									"name": "Views"
+								}
+							},
+							{
+								"source": {
+									"path": "['@UpVotes']"
+								},
+								"sink": {
+									"name": "UpVotes"
+								}
+							},
+							{
+								"source": {
+									"path": "['@DownVotes']"
+								},
+								"sink": {
+									"name": "DownVotes"
+								}
+							}
+						],
+						"collectionReference": "$['users']['row']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Users.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
+			},
+			{
+				"name": "Copy - Votes",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "XmlSource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "XmlReadSettings",
+							"validationMode": "none",
+							"namespaces": true
+						}
+					},
+					"sink": {
+						"type": "ParquetSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "ParquetWriteSettings"
+						}
+					},
+					"enableStaging": false,
+					"translator": {
+						"type": "TabularTranslator",
+						"mappings": [
+							{
+								"source": {
+									"path": "['@Id']"
+								},
+								"sink": {
+									"name": "Id"
+								}
+							},
+							{
+								"source": {
+									"path": "['@PostId']"
+								},
+								"sink": {
+									"name": "PostId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@VoteTypeId']"
+								},
+								"sink": {
+									"name": "VoteTypeId"
+								}
+							},
+							{
+								"source": {
+									"path": "['@CreationDate']"
+								},
+								"sink": {
+									"name": "CreationDate"
+								}
+							}
+						],
+						"collectionReference": "$['votes']['row']"
+					}
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Votes.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "ParquetXMLStorage",
+						"type": "DatasetReference"
+					}
+				]
 			}
 		],
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "lake"
+			},
+			"Folder": {
+				"type": "string",
+				"defaultValue": "StackOverflow/raw"
+			},
+			"Account": {
+				"type": "string",
+				"defaultValue": "synapselakeapp"
+			}
+		},
 		"annotations": []
 	}
 }
