@@ -1,0 +1,84 @@
+{
+	"name": "StackOverflow - test",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy - Badges",
+				"type": "Copy",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.06:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 120,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "BinarySource",
+						"storeSettings": {
+							"type": "HttpReadSettings",
+							"requestMethod": "GET"
+						},
+						"formatSettings": {
+							"type": "BinaryReadSettings"
+						}
+					},
+					"sink": {
+						"type": "BinarySink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "Un7zBin",
+						"type": "DatasetReference",
+						"parameters": {
+							"Account": {
+								"value": "@uriComponent(pipeline().parameters.Account)",
+								"type": "Expression"
+							},
+							"Container": {
+								"value": "@uriComponent(pipeline().parameters.Container)",
+								"type": "Expression"
+							},
+							"Folder": {
+								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+								"type": "Expression"
+							},
+							"FileName": {
+								"value": "@uriComponent('stackoverflow.com-Badges.7z')",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "XMLBin",
+						"type": "DatasetReference"
+					}
+				]
+			}
+		],
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "lake"
+			},
+			"Folder": {
+				"type": "string",
+				"defaultValue": "StackOverflow/raw"
+			},
+			"Account": {
+				"type": "string",
+				"defaultValue": "synapselakeapp"
+			}
+		},
+		"annotations": []
+	}
+}
