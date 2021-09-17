@@ -10,6 +10,7 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
+				"fileName": "stackoverflow.com-Badges.xml",
 				"folderPath": "StackOverflow/xml",
 				"fileSystem": "lake"
 			}
