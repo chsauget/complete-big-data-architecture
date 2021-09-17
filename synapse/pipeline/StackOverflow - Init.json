@@ -37,7 +37,14 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "synapse-app-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "tmp"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -150,7 +157,14 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "synapse-app-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "tmp"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -271,7 +285,14 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "synapse-app-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "tmp"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -400,7 +421,14 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "synapse-app-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "tmp"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -513,7 +541,14 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "synapse-app-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "tmp"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
@@ -658,7 +693,14 @@
 							"type": "ParquetWriteSettings"
 						}
 					},
-					"enableStaging": false,
+					"enableStaging": true,
+					"stagingSettings": {
+						"linkedServiceName": {
+							"referenceName": "synapse-app-WorkspaceDefaultStorage",
+							"type": "LinkedServiceReference"
+						},
+						"path": "tmp"
+					},
 					"translator": {
 						"type": "TabularTranslator",
 						"mappings": [
