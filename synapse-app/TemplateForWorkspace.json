@@ -104,8 +104,177 @@
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/Dataflow1')]",
-				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+				"[concat(variables('workspaceId'), '/dataflows/Dataflow1')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/StackOverflow - 7zip2Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach - 7zip Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata - List 7z",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata - List 7z').output.childItems",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy - UnZip Files 2 Parquet",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "0.06:00:00",
+										"retry": 1,
+										"retryIntervalInSeconds": 120,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent('stackoverflow.com-Tags.7z')\n)}"
+										},
+										{
+											"name": "Destination",
+											"value": "lake/StackOverflow/parquet/@{'stackoverflow.com-Tags.parquet'}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "JsonSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET"
+											},
+											"formatSettings": {
+												"type": "JsonReadSettings"
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "Json1",
+											"type": "DatasetReference",
+											"parameters": {
+												"Account": {
+													"value": "@uriComponent(pipeline().parameters.Account)",
+													"type": "Expression"
+												},
+												"Container": {
+													"value": "@uriComponent(pipeline().parameters.Container)",
+													"type": "Expression"
+												},
+												"Folder": {
+													"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@uriComponent(item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ParquetXMLStorage",
+											"type": "DatasetReference",
+											"parameters": {
+												"FileName": {
+													"value": "@uriComponent(item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Get Metadata - List 7z",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 90,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "ZipXml",
+								"type": "DatasetReference",
+								"parameters": {
+									"container": {
+										"value": "@pipeline().parameters.Container",
+										"type": "Expression"
+									},
+									"folder": {
+										"value": "@pipeline().parameters.Folder",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					}
+				],
+				"parameters": {
+					"Container": {
+						"type": "string",
+						"defaultValue": "lake"
+					},
+					"Folder": {
+						"type": "string",
+						"defaultValue": "StackOverflow/raw"
+					},
+					"Account": {
+						"type": "string",
+						"defaultValue": "synapselakeapp"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/ZipXml')]",
+				"[concat(variables('workspaceId'), '/datasets/Json1')]",
+				"[concat(variables('workspaceId'), '/datasets/ParquetXMLStorage')]"
 			]
 		},
 		{
@@ -225,7 +394,9 @@
 							{
 								"referenceName": "ParquetXMLStorage",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "''"
+								}
 							}
 						]
 					},
@@ -347,7 +518,9 @@
 							{
 								"referenceName": "ParquetXMLStorage",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "''"
+								}
 							}
 						]
 					},
@@ -477,7 +650,9 @@
 							{
 								"referenceName": "ParquetXMLStorage",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "''"
+								}
 							}
 						]
 					},
@@ -591,7 +766,9 @@
 							{
 								"referenceName": "ParquetXMLStorage",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "''"
+								}
 							}
 						]
 					},
@@ -737,7 +914,9 @@
 							{
 								"referenceName": "ParquetXMLStorage",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "''"
+								}
 							}
 						]
 					},
@@ -843,7 +1022,9 @@
 							{
 								"referenceName": "ParquetXMLStorage",
 								"type": "DatasetReference",
-								"parameters": {}
+								"parameters": {
+									"FileName": "''"
+								}
 							}
 						]
 					}
@@ -1040,6 +1221,46 @@
 			]
 		},
 		{
+			"name": "[concat(parameters('workspaceName'), '/Json1')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Azure Function API",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Account": {
+						"type": "string"
+					},
+					"Container": {
+						"type": "string"
+					},
+					"Folder": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@concat('/api/SevenZip/'\n,dataset().Account\n,'/'\n,dataset().Container\n,'/'\n,dataset().Folder\n,'/'\n,dataset().FileName\n)",
+							"type": "Expression"
+						}
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Azure Function API')]"
+			]
+		},
+		{
 			"name": "[concat(parameters('workspaceName'), '/ParquetXMLStorage')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
@@ -1048,11 +1269,20 @@
 					"referenceName": "synapse-app-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
+				"parameters": {
+					"FileName": {
+						"type": "string"
+					}
+				},
 				"annotations": [],
 				"type": "Parquet",
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
+							"type": "Expression"
+						},
 						"folderPath": "StackOverflow/parquet",
 						"fileSystem": "lake"
 					},
@@ -1429,7 +1659,7 @@
 							"name": "FlattenXml2Table"
 						}
 					],
-					"script": "source(output(\n\t\tbadges as (row as ({@Class} as short, {@Date} as string, {@Id} as integer, {@Name} as string, {@TagBased} as boolean, {@UserId} as short)[])\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'xml',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/sample',\n\tfileName: 'Badges-sample.xml',\n\tvalidationMode: 'none',\n\tnamespaces: true) ~> SrcBadgesXML\nSrcBadgesXML foldDown(unroll(badges.row, badges.row),\n\tmapColumn(\n\t\tClass = badges.row.{@Class},\n\t\tDate = badges.row.{@Date},\n\t\tId = badges.row.{@Id},\n\t\tName = badges.row.{@Name},\n\t\tTagBased = badges.row.{@TagBased},\n\t\tUserId = badges.row.{@UserId}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenXml2Table\nFlattenXml2Table sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/parquet/Badges',\n\ttruncate: true,\n\tcompressionCodec: 'snappy',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SinkParquet"
+					"script": "source(output(\n\t\tbadges as (row as ({@Class} as short, {@Date} as string, {@Id} as integer, {@Name} as string, {@TagBased} as boolean, {@UserId} as short)[])\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'xml',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/xml',\n\tfileName: 'stackoverflow.com-Badges.xml',\n\tvalidationMode: 'none',\n\tnamespaces: true) ~> SrcBadgesXML\nSrcBadgesXML foldDown(unroll(badges.row, badges.row),\n\tmapColumn(\n\t\tClass = badges.row.{@Class},\n\t\tDate = badges.row.{@Date},\n\t\tId = badges.row.{@Id},\n\t\tName = badges.row.{@Name},\n\t\tTagBased = badges.row.{@TagBased},\n\t\tUserId = badges.row.{@UserId}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenXml2Table\nFlattenXml2Table sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/parquet/Badges',\n\ttruncate: true,\n\tcompressionCodec: 'snappy',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SinkParquet"
 				}
 			},
 			"dependsOn": [
@@ -1493,6 +1723,106 @@
 					"resultLimit": 5000
 				},
 				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Notebook 1')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"bigDataPool": {
+					"referenceName": "spark3",
+					"type": "BigDataPoolReference"
+				},
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"kernelspec": {
+						"name": "synapse_pyspark",
+						"display_name": "Synapse PySpark"
+					},
+					"language_info": {
+						"name": "python"
+					},
+					"a365ComputeOptions": {
+						"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark3",
+						"name": "spark3",
+						"type": "Spark",
+						"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark3",
+						"auth": {
+							"type": "AAD",
+							"authResource": "https://dev.azuresynapse.net"
+						},
+						"sparkVersion": "3.1",
+						"nodeCount": 3,
+						"cores": 4,
+						"memory": 28
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"df = spark.read.format(\"com.databricks.spark.xml\").option(\"rowTag\",\"row\").load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml')\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import com.databricks.spark.xml._ "
+						],
+						"outputs": [],
+						"execution_count": 2
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml', format='xml')\r\n",
+							"display(df.limit(10))"
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
 			},
 			"dependsOn": []
 		},
