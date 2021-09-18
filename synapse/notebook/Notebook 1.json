@@ -8,10 +8,10 @@
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "56g",
-			"driverCores": 8,
-			"executorMemory": "56g",
-			"executorCores": 8,
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
 			"numExecutors": 2,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
@@ -21,6 +21,7 @@
 		},
 		"metadata": {
 			"saveOutput": true,
+			"enableDebugMode": false,
 			"kernelspec": {
 				"name": "synapse_pyspark",
 				"display_name": "Synapse PySpark"
@@ -47,11 +48,14 @@
 		"cells": [
 			{
 				"cell_type": "code",
+				"metadata": {
+					"collapsed": false
+				},
 				"source": [
-					"df = spark.read.format(\"com.databricks.spark.xml\").option(\"rowTag\",\"row\").load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml')\r\n",
-					""
+					"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/parquet/stackoverflow.com-Tags.parquet', format='parquet')\r\n",
+					"display(df.limit(10))"
 				],
-				"execution_count": 5
+				"execution_count": 3
 			},
 			{
 				"cell_type": "code",
@@ -64,13 +68,24 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"collapsed": false
 				},
 				"source": [
-					"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml', format='xml')\r\n",
-					"display(df.limit(10))"
+					"from pyspark.sql.functions import year, month, dayofmonth, hour, minute, second\r\n",
+					"\r\n",
+					"df = spark.read.format('xml').options(rowTag='row').load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-Posts.xml')\r\n",
+					"\r\n",
+					"\r\n",
+					"df_final = df.withColumn(\"year\", year(df[\"_CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"_CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"_CreationDate\"]))\r\n",
+					"\r\n",
+					"\r\n",
+					"df_final.write.partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").parquet(\"abfss://lake@synapselakeapp.dfs.core.windows.net/Partitioned/Posts\")\r\n",
+					""
 				],
-				"execution_count": null
+				"execution_count": 3
 			}
 		]
 	}

@@ -112,7 +112,10 @@
 				"outputs": [
 					{
 						"referenceName": "ParquetXMLStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "''"
+						}
 					}
 				]
 			},
@@ -233,7 +236,10 @@
 				"outputs": [
 					{
 						"referenceName": "ParquetXMLStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "''"
+						}
 					}
 				]
 			},
@@ -362,7 +368,10 @@
 				"outputs": [
 					{
 						"referenceName": "ParquetXMLStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "''"
+						}
 					}
 				]
 			},
@@ -475,7 +484,10 @@
 				"outputs": [
 					{
 						"referenceName": "ParquetXMLStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "''"
+						}
 					}
 				]
 			},
@@ -620,7 +632,10 @@
 				"outputs": [
 					{
 						"referenceName": "ParquetXMLStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "''"
+						}
 					}
 				]
 			},
@@ -725,7 +740,10 @@
 				"outputs": [
 					{
 						"referenceName": "ParquetXMLStorage",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "''"
+						}
 					}
 				]
 			}
