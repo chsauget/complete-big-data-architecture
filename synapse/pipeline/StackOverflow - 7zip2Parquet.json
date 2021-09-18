@@ -34,11 +34,11 @@
 							"userProperties": [
 								{
 									"name": "Source",
-									"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent('stackoverflow.com-Tags.7z')\n)}"
+									"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent(item().name)\n)}"
 								},
 								{
 									"name": "Destination",
-									"value": "lake/StackOverflow/parquet/@{'stackoverflow.com-Tags.parquet'}"
+									"value": "lake/StackOverflow/parquet/@{uriComponent(replace(item().name,'.7z','.parquet'))}"
 								}
 							],
 							"typeProperties": {
@@ -93,7 +93,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FileName": {
-											"value": "@uriComponent(item().name)",
+											"value": "@uriComponent(replace(item().name,'.7z','.parquet'))",
 											"type": "Expression"
 										}
 									}
