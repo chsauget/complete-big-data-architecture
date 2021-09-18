@@ -1,0 +1,35 @@
+{
+	"name": "Json1",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "Azure Function API",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"Account": {
+				"type": "string"
+			},
+			"Container": {
+				"type": "string"
+			},
+			"Folder": {
+				"type": "string"
+			},
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "HttpServerLocation",
+				"relativeUrl": {
+					"value": "@concat('/api/SevenZip/'\n,dataset().Account\n,'/'\n,dataset().Container\n,'/'\n,dataset().Folder\n,'/'\n,dataset().FileName\n)",
+					"type": "Expression"
+				}
+			}
+		},
+		"schema": {}
+	}
+}

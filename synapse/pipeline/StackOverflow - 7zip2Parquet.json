@@ -1,0 +1,163 @@
+{
+	"name": "StackOverflow - 7zip2Parquet",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach - 7zip Files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata - List 7z",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata - List 7z').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy - UnZip Files 2 Parquet",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.06:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 120,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "Source",
+									"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent('stackoverflow.com-Tags.7z')\n)}"
+								},
+								{
+									"name": "Destination",
+									"value": "lake/StackOverflow/parquet/@{'stackoverflow.com-Tags.parquet'}"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "JsonSource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "JsonReadSettings"
+									}
+								},
+								"sink": {
+									"type": "ParquetSink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									},
+									"formatSettings": {
+										"type": "ParquetWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Json1",
+									"type": "DatasetReference",
+									"parameters": {
+										"Account": {
+											"value": "@uriComponent(pipeline().parameters.Account)",
+											"type": "Expression"
+										},
+										"Container": {
+											"value": "@uriComponent(pipeline().parameters.Container)",
+											"type": "Expression"
+										},
+										"Folder": {
+											"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@uriComponent(item().name)",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "ParquetXMLStorage",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@uriComponent(item().name)",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get Metadata - List 7z",
+				"type": "GetMetadata",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.00:15:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 90,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"dataset": {
+						"referenceName": "ZipXml",
+						"type": "DatasetReference",
+						"parameters": {
+							"container": {
+								"value": "@pipeline().parameters.Container",
+								"type": "Expression"
+							},
+							"folder": {
+								"value": "@pipeline().parameters.Folder",
+								"type": "Expression"
+							}
+						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"Container": {
+				"type": "string",
+				"defaultValue": "lake"
+			},
+			"Folder": {
+				"type": "string",
+				"defaultValue": "StackOverflow/raw"
+			},
+			"Account": {
+				"type": "string",
+				"defaultValue": "synapselakeapp"
+			}
+		},
+		"annotations": []
+	}
+}
