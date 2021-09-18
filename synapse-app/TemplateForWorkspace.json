@@ -865,8 +865,12 @@
 									},
 									"userProperties": [
 										{
-											"name": "FIleName",
-											"value": "@item().name"
+											"name": "Source",
+											"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent(item().name)\n)}"
+										},
+										{
+											"name": "Destination",
+											"value": "lake/StackOverflow/xml/@{item().name}"
 										}
 									],
 									"typeProperties": {
@@ -906,7 +910,7 @@
 													"type": "Expression"
 												},
 												"FileName": {
-													"value": "@uriComponent('stackoverflow.com-Badges.7z')",
+													"value": "@uriComponent(item().name)",
 													"type": "Expression"
 												}
 											}
