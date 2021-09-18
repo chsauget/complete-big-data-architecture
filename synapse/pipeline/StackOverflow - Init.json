@@ -744,6 +744,9 @@
 				"defaultValue": "synapselakeapp"
 			}
 		},
+		"folder": {
+			"name": "Archive"
+		},
 		"annotations": []
 	}
 }
