@@ -39,8 +39,8 @@
 				},
 				"sparkVersion": "2.4",
 				"nodeCount": 5,
-				"cores": 8,
-				"memory": 56
+				"cores": 4,
+				"memory": 28
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -51,7 +51,7 @@
 					"df = spark.read.format(\"com.databricks.spark.xml\").option(\"rowTag\",\"row\").load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml')\r\n",
 					""
 				],
-				"execution_count": 2
+				"execution_count": 5
 			},
 			{
 				"cell_type": "code",
@@ -70,7 +70,7 @@
 					"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml', format='xml')\r\n",
 					"display(df.limit(10))"
 				],
-				"execution_count": 1
+				"execution_count": null
 			}
 		]
 	}
