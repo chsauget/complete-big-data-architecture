@@ -90,7 +90,7 @@
 									"type": "DatasetReference",
 									"parameters": {
 										"FileName": {
-											"value": "@item().name",
+											"value": "@replace(item().name,'.7z','.xml')",
 											"type": "Expression"
 										}
 									}
