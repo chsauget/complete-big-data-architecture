@@ -1,0 +1,28 @@
+{
+	"name": "XMLBin",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapse-app-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string",
+				"defaultValue": "stackoverflow.com-Badges.xml"
+			}
+		},
+		"annotations": [],
+		"type": "Binary",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": "StackOverflow/xml",
+				"fileSystem": "lake"
+			}
+		}
+	}
+}
