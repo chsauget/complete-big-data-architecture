@@ -40,8 +40,8 @@
 				},
 				"sparkVersion": "2.4",
 				"nodeCount": 5,
-				"cores": 4,
-				"memory": 28
+				"cores": 16,
+				"memory": 112
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -85,7 +85,7 @@
 					"df_final.write.partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").parquet(\"abfss://lake@synapselakeapp.dfs.core.windows.net/Partitioned/Posts\")\r\n",
 					""
 				],
-				"execution_count": 3
+				"execution_count": 12
 			}
 		]
 	}
