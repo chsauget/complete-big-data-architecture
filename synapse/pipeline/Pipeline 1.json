@@ -20,7 +20,7 @@
 						"type": "DataFlowReference"
 					},
 					"compute": {
-						"coreCount": 32,
+						"coreCount": 16,
 						"computeType": "MemoryOptimized"
 					},
 					"traceLevel": "Fine"
