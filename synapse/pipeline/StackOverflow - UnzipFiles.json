@@ -74,7 +74,7 @@
 											"type": "Expression"
 										},
 										"FileName": {
-											"value": "@uriComponent('stackoverflow.com-Badges.7z')",
+											"value": "@uriComponent(item().name)",
 											"type": "Expression"
 										}
 									}
