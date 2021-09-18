@@ -5,17 +5,44 @@
 		"workspaceName": {
 			"value": "synapse-app"
 		},
+		"AzureMLService1_servicePrincipalKey": {
+			"value": ""
+		},
 		"CosmosDb_connectionString": {
+			"value": ""
+		},
+		"SQLOD_SynapseAPP_connectionString": {
 			"value": ""
 		},
 		"synapse-app-WorkspaceDefaultSqlServer_connectionString": {
 			"value": ""
 		},
-		"synapse-app-WorkspaceDefaultStorage_properties_typeProperties_url": {
-			"value": "https://synapselakeapp.dfs.core.windows.net"
+		"Azure Function API_properties_typeProperties_url": {
+			"value": "https://net-core-for-big-data-premium.azurewebsites.net"
+		},
+		"AzureMLService1_properties_typeProperties_subscriptionId": {
+			"value": "c24ef419-76bf-4265-bb0d-e3e3f3086be2"
+		},
+		"AzureMLService1_properties_typeProperties_resourceGroupName": {
+			"value": "complete-big-data-architecture"
+		},
+		"AzureMLService1_properties_typeProperties_servicePrincipalId": {
+			"value": "d5340f3f-e135-4b2c-9a28-a142eb98f57e"
+		},
+		"AzureMLService1_properties_typeProperties_tenant": {
+			"value": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b"
 		},
 		"akv_app_properties_typeProperties_baseUrl": {
 			"value": "https://akv-app.vault.azure.net/"
+		},
+		"nyc_tlc_fhv_sasUri": {
+			"value": ""
+		},
+		"nyc_tlc_yellow_sasUri": {
+			"value": ""
+		},
+		"synapse-app-WorkspaceDefaultStorage_properties_typeProperties_url": {
+			"value": "https://synapselakeapp.dfs.core.windows.net"
 		}
 	}
 }
