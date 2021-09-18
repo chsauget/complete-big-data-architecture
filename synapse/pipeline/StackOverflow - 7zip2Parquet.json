@@ -7,7 +7,7 @@
 				"type": "ForEach",
 				"dependsOn": [
 					{
-						"activity": "Get Metadata - List 7z",
+						"activity": "Filter - Specific File",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -142,6 +142,29 @@
 						"type": "BinaryReadSettings"
 					}
 				}
+			},
+			{
+				"name": "Filter - Specific File",
+				"type": "Filter",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata - List 7z",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata - List 7z').output.childItems",
+						"type": "Expression"
+					},
+					"condition": {
+						"value": "@equals(item().name,pipeline().parameters.FileName)",
+						"type": "Expression"
+					}
+				}
 			}
 		],
 		"parameters": {
@@ -156,6 +179,9 @@
 			"Account": {
 				"type": "string",
 				"defaultValue": "synapselakeapp"
+			},
+			"FileName": {
+				"type": "string"
 			}
 		},
 		"annotations": []
