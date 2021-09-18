@@ -5,12 +5,21 @@
 			"referenceName": "synapse-app-WorkspaceDefaultStorage",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"FileName": {
+				"type": "string",
+				"defaultValue": "stackoverflow.com-Badges.xml"
+			}
+		},
 		"annotations": [],
 		"type": "Binary",
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"fileName": "stackoverflow.com-Badges.xml",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
 				"folderPath": "StackOverflow/xml",
 				"fileSystem": "lake"
 			}

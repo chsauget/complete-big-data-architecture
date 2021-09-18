@@ -3,66 +3,137 @@
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy - Badges",
-				"type": "Copy",
+				"name": "ForEach - 7zip Files",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "Get Metadata - List 7z",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('Get Metadata - List 7z').output.childItems",
+						"type": "Expression"
+					},
+					"activities": [
+						{
+							"name": "Copy - UnZip Files",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.06:00:00",
+								"retry": 1,
+								"retryIntervalInSeconds": 120,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [
+								{
+									"name": "FIleName",
+									"value": "@item().name"
+								}
+							],
+							"typeProperties": {
+								"source": {
+									"type": "BinarySource",
+									"storeSettings": {
+										"type": "HttpReadSettings",
+										"requestMethod": "GET"
+									},
+									"formatSettings": {
+										"type": "BinaryReadSettings"
+									}
+								},
+								"sink": {
+									"type": "BinarySink",
+									"storeSettings": {
+										"type": "AzureBlobFSWriteSettings"
+									}
+								},
+								"enableStaging": false
+							},
+							"inputs": [
+								{
+									"referenceName": "Un7zBin",
+									"type": "DatasetReference",
+									"parameters": {
+										"Account": {
+											"value": "@uriComponent(pipeline().parameters.Account)",
+											"type": "Expression"
+										},
+										"Container": {
+											"value": "@uriComponent(pipeline().parameters.Container)",
+											"type": "Expression"
+										},
+										"Folder": {
+											"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+											"type": "Expression"
+										},
+										"FileName": {
+											"value": "@uriComponent('stackoverflow.com-Badges.7z')",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "XMLBin",
+									"type": "DatasetReference",
+									"parameters": {
+										"FileName": {
+											"value": "@item().name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						}
+					]
+				}
+			},
+			{
+				"name": "Get Metadata - List 7z",
+				"type": "GetMetadata",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "0.06:00:00",
+					"timeout": "0.00:15:00",
 					"retry": 3,
-					"retryIntervalInSeconds": 120,
+					"retryIntervalInSeconds": 90,
 					"secureOutput": false,
 					"secureInput": false
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"source": {
-						"type": "BinarySource",
-						"storeSettings": {
-							"type": "HttpReadSettings",
-							"requestMethod": "GET"
-						},
-						"formatSettings": {
-							"type": "BinaryReadSettings"
-						}
-					},
-					"sink": {
-						"type": "BinarySink",
-						"storeSettings": {
-							"type": "AzureBlobFSWriteSettings"
-						}
-					},
-					"enableStaging": false
-				},
-				"inputs": [
-					{
-						"referenceName": "Un7zBin",
+					"dataset": {
+						"referenceName": "ZipXml",
 						"type": "DatasetReference",
 						"parameters": {
-							"Account": {
-								"value": "@uriComponent(pipeline().parameters.Account)",
+							"container": {
+								"value": "@pipeline().parameters.Container",
 								"type": "Expression"
 							},
-							"Container": {
-								"value": "@uriComponent(pipeline().parameters.Container)",
-								"type": "Expression"
-							},
-							"Folder": {
-								"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
-								"type": "Expression"
-							},
-							"FileName": {
-								"value": "@uriComponent('stackoverflow.com-Badges.7z')",
+							"folder": {
+								"value": "@pipeline().parameters.Folder",
 								"type": "Expression"
 							}
 						}
+					},
+					"fieldList": [
+						"childItems"
+					],
+					"storeSettings": {
+						"type": "AzureBlobFSReadSettings",
+						"enablePartitionDiscovery": false
+					},
+					"formatSettings": {
+						"type": "BinaryReadSettings"
 					}
-				],
-				"outputs": [
-					{
-						"referenceName": "XMLBin",
-						"type": "DatasetReference"
-					}
-				]
+				}
 			}
 		],
 		"parameters": {
