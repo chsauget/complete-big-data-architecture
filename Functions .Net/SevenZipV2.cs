@@ -36,69 +36,67 @@ namespace Company.Function
             var DownloadFile = directoryClient.GetFileClient(HttpUtility.UrlDecode(filename));
             var ReadStream = await DownloadFile.OpenReadAsync();
 
-            XmlReaderSettings settings = new XmlReaderSettings();
-            settings.Async = true;
+
             
-          
+            //Begin to send first http response
             var response = req.HttpContext.Response;
             response.StatusCode = 200;
             response.ContentType = "application/json-data-stream";
             await response.Body.WriteAsync(Encoding.UTF8.GetBytes("["));
-            var tempPath = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
             using (var archive = SevenZipArchive.Open(ReadStream, null))
             {
-                foreach (var entry in archive.Entries.Where(entry => !entry.IsDirectory))
+                //Retrieve uncompressed Stream
+                IArchiveEntry e = archive.Entries.FirstOrDefault(); 
+                var un7ZipStream = e.OpenEntryStream();
+
+                XmlReaderSettings settings = new XmlReaderSettings();
+                settings.Async = true;
+                using (XmlReader reader = XmlReader.Create(un7ZipStream, settings))
                 {
-                    IArchiveEntry e = archive.Entries.FirstOrDefault(); 
-
-                        var un7ZipStream = e.OpenEntryStream();
-
-                        using (XmlReader reader = XmlReader.Create(un7ZipStream, settings))
+                    bool keepReading = reader.Read();
+                    bool firstrow = true;
+                    while(keepReading)
+                    {
+                        try
                         {
-                            bool keepReading = reader.Read();
-                            bool firstrow = true;
-                            while(keepReading)
+                            if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
                             {
-                                try
-                                {
-                                    if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
-                                    {
 
-                                        dynamic exo = new ExpandoObject();   
-                                        for (int attInd = 0; attInd < reader.AttributeCount; attInd++){
-                                                
-                                            reader.MoveToAttribute( attInd );
-                                            ((IDictionary<String, Object>)exo).Add(reader.Name, reader.Value);
-                                            }
-                                        await response.Body.WriteAsync(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(exo)));
-                                                            
+                                dynamic exo = new ExpandoObject();   
+                                for (int attInd = 0; attInd < reader.AttributeCount; attInd++){
+                                        
+                                    reader.MoveToAttribute( attInd );
+                                    ((IDictionary<String, Object>)exo).Add(reader.Name, reader.Value);
                                     }
-                                    if(reader.Read())
+                                await response.Body.WriteAsync(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(exo)));
+                                                    
+                            }
+                            if(reader.Read())
+                            {
+                                if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
+                                {
+                                    if(!firstrow)
                                     {
-                                        if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
-                                        {
-                                            if(!firstrow)
-                                            {
-                                                await response.Body.WriteAsync(Encoding.UTF8.GetBytes(","));
-                                            }
-                                            else
-                                            {
-                                                firstrow=false;
-                                            }
-                                        }
+                                        await response.Body.WriteAsync(Encoding.UTF8.GetBytes(","));
                                     }
                                     else
                                     {
-                                        keepReading = false;
-                                    }  
-                                }catch(Exception ex)
-                                {
-                                    log.LogInformation(ex.Message);
+                                        firstrow=false;
+                                    }
                                 }
                             }
+                            else
+                            {
+                                keepReading = false;
+                            }  
+                        }catch(Exception ex)
+                        {
+                            log.LogInformation(ex.Message);
                         }
-
+                    }
                 }
+
             }
             await response.Body.WriteAsync(Encoding.UTF8.GetBytes("]"));
             return new EmptyResult();
