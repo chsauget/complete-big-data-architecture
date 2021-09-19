@@ -1,0 +1,20 @@
+{
+	"name": "Create db StackOverflowDwh",
+	"properties": {
+		"folder": {
+			"name": "StackOverflowDwh"
+		},
+		"content": {
+			"query": "CREATE DATABASE StackOverflowDwh COLLATE Latin1_General_100_CI_AS_SC_UTF8",
+			"metadata": {
+				"language": "sql"
+			},
+			"currentConnection": {
+				"databaseName": "master",
+				"poolName": "Built-in"
+			},
+			"resultLimit": 5000
+		},
+		"type": "SqlQuery"
+	}
+}
