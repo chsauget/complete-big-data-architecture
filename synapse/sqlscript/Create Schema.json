@@ -1,5 +1,5 @@
 {
-	"name": "Schema",
+	"name": "Create Schema",
 	"properties": {
 		"folder": {
 			"name": "StackOverflowDwh"
