@@ -1,11 +1,11 @@
 {
-	"name": "Badges",
+	"name": "Views",
 	"properties": {
 		"folder": {
 			"name": "StackOverflowDwh/raw"
 		},
 		"content": {
-			"query": "CREATE VIEW [raw].[Badges]\nAS\nSELECT *\nFROM\n    OPENROWSET(\n        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/parquet/stackoverflow.com-Badges.parquet',\n        \n        FORMAT='PARQUET'\n) AS [result]\n",
+			"query": "CREATE VIEW [raw].[Badges]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-Badges.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[Comments]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-Comments.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[PostHistory]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-PostHistory.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[PostLinks]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-PostLinks.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[Posts]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-Posts.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[Tags]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-Tags.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[Users]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-Users.parquet',                FORMAT='PARQUET') AS [result]\nCREATE VIEW [raw].[Votes]AS SELECT *FROM    OPENROWSET(        BULK 'https://synapselakeapp.dfs.core.windows.net/lake/StackOverflow/raw/History/Parquet/stackoverflow.com-Votes.parquet',                FORMAT='PARQUET') AS [result]",
 			"metadata": {
 				"language": "sql"
 			},
