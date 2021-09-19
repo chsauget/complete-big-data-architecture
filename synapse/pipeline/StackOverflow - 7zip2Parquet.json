@@ -16,7 +16,7 @@
 				"userProperties": [],
 				"typeProperties": {
 					"items": {
-						"value": "@activity('Get Metadata - List 7z').output.childItems",
+						"value": "@activity('Filter - Specific File').output.Value",
 						"type": "Expression"
 					},
 					"activities": [
@@ -181,7 +181,8 @@
 				"defaultValue": "synapselakeapp"
 			},
 			"FileName": {
-				"type": "string"
+				"type": "string",
+				"defaultValue": "stackoverflow.com-PostLinks.7z"
 			}
 		},
 		"annotations": []
