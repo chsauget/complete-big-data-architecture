@@ -27,7 +27,7 @@
 				"display_name": "Synapse PySpark"
 			},
 			"language_info": {
-				"name": "python"
+				"name": "scala"
 			},
 			"a365ComputeOptions": {
 				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
@@ -40,8 +40,8 @@
 				},
 				"sparkVersion": "2.4",
 				"nodeCount": 5,
-				"cores": 4,
-				"memory": 28
+				"cores": 16,
+				"memory": 112
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -85,7 +85,29 @@
 					"df_final.write.partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").parquet(\"abfss://lake@synapselakeapp.dfs.core.windows.net/Partitioned/Posts\")\r\n",
 					""
 				],
-				"execution_count": 3
+				"execution_count": 12
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import com.databricks.spark.xml._\r\n",
+					"\r\n",
+					"val df = spark.read.option(\"rowTag\", \"row\").xml(\"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-Posts.xml\")\r\n",
+					"\r\n",
+					"df.write.format(\"parquet\").mode(\"overwrite\").save(\"abfss://lake@synapselakeapp.dfs.core.windows.net/Partitioned/Posts-scala\")"
+				],
+				"execution_count": 15
 			}
 		]
 	}
