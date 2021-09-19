@@ -15,11 +15,11 @@
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 4,
+			"numExecutors": 7,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
 				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "4"
+				"spark.dynamicAllocation.maxExecutors": "7"
 			}
 		},
 		"metadata": {
@@ -43,8 +43,8 @@
 				},
 				"sparkVersion": "2.4",
 				"nodeCount": 3,
-				"cores": 4,
-				"memory": 28
+				"cores": 8,
+				"memory": 56
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -52,12 +52,13 @@
 			{
 				"cell_type": "code",
 				"source": [
-					"from pyspark.sql.functions import year, month, dayofmonth, hour, minute, second\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"from pyspark.sql.types import *\r\n",
 					"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
 					"goldpath = \"gold/\"\r\n",
 					"historypath = \"raw/History/Parquet/\""
 				],
-				"execution_count": 10
+				"execution_count": 42
 			},
 			{
 				"cell_type": "markdown",
@@ -90,9 +91,11 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df.write.format(\"delta\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df.write.format(\"delta\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 24
+				"execution_count": 2
 			},
 			{
 				"cell_type": "markdown",
@@ -118,6 +121,24 @@
 						"transient": {
 							"deleting": false
 						}
+					}
+				},
+				"source": [
+					"spark.sql(\"DROP TABLE SparkDwh.Badges\")"
+				],
+				"execution_count": 65
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
 					},
 					"collapsed": false
 				},
@@ -126,13 +147,20 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"Date\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"Date\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"Date\"]))\r\n",
+					"df_withDate = df.withColumn(\"Id\", df[\"Id\"].cast(LongType()))\\\r\n",
+					"                .withColumn(\"Class\", df[\"Class\"].cast(IntegerType()))\\\r\n",
+					"                .withColumn(\"DateTime\", df[\"Date\"].cast(TimestampType()))\\\r\n",
+					"                .withColumn(\"UserId\", df[\"UserId\"].cast(LongType()))\\\r\n",
+					"                .withColumn(\"PartitionDate\", date_format(df[\"Date\"],\"yyyy-MM-dd\"))\r\n",
+					"                \r\n",
+					"df_withDate.drop(\"Date\")\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 14
+				"execution_count": 66
 			},
 			{
 				"cell_type": "markdown",
@@ -165,13 +193,20 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"df_withDate = df.withColumn(\"Id\", df[\"Id\"].cast(LongType()))\\\r\n",
+					"                .withColumn(\"PostId\", df[\"PostId\"].cast(LongType()))\\\r\n",
+					"                .withColumn(\"Score\", df[\"Score\"].cast(IntegerType()))\\\r\n",
+					"                .withColumn(\"UserId\", df[\"UserId\"].cast(LongType()))\\\r\n",
+					"                .withColumn(\"CreationDateTime\", df[\"CreationDate\"].cast(TimestampType()))\\\r\n",
+					"                .withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
+					"                \r\n",
+					"df_withDate.drop(\"CreationDate\")\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 16
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -204,13 +239,13 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"df_withDate = df.withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 17
+				"execution_count": 35
 			},
 			{
 				"cell_type": "markdown",
@@ -243,13 +278,13 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"df_withDate = df.withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 18
+				"execution_count": 36
 			},
 			{
 				"cell_type": "markdown",
@@ -282,13 +317,13 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"df_withDate = df.withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 26
+				"execution_count": 37
 			},
 			{
 				"cell_type": "markdown",
@@ -321,13 +356,13 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"df_withDate = df.withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": null
+				"execution_count": 38
 			},
 			{
 				"cell_type": "markdown",
@@ -360,13 +395,13 @@
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
 					"\r\n",
-					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
-					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"df_withDate = df.withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"\r\n",
+					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": null
+				"execution_count": 39
 			}
 		]
 	}
