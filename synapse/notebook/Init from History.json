@@ -1,5 +1,5 @@
 {
-	"name": "Notebook 3",
+	"name": "Init from History",
 	"properties": {
 		"folder": {
 			"name": "StackOverflow"
@@ -53,10 +53,24 @@
 				"cell_type": "code",
 				"source": [
 					"from pyspark.sql.functions import year, month, dayofmonth, hour, minute, second\r\n",
-					"\r\n",
-					""
+					"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
+					"goldpath = \"gold/\"\r\n",
+					"historypath = \"raw/History/Parquet/\""
 				],
-				"execution_count": 4
+				"execution_count": 10
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Tags**"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -72,11 +86,26 @@
 					}
 				},
 				"source": [
-					"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/raw/History/Parquet/stackoverflow.com-Tags.parquet', format='parquet')\r\n",
+					"tableName = 'Tags'\r\n",
 					"\r\n",
-					"df.write.format(\"delta\").mode(\"overwrite\").save(\"StackOverflow/gold/Tags\")"
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df.write.format(\"delta\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
 				],
-				"execution_count": 7
+				"execution_count": 11
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Badges**"
+				]
 			},
 			{
 				"cell_type": "code",
@@ -93,9 +122,251 @@
 					"collapsed": false
 				},
 				"source": [
-					""
+					"tableName = 'Badges'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"Date\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"Date\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"Date\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
 				],
-				"execution_count": 5
+				"execution_count": 14
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Comments**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableName = 'Comments'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+				],
+				"execution_count": 16
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**PostHistory**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableName = 'PostHistory'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**PostLinks**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableName = 'PostLinks'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Posts**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableName = 'Posts'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Users**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableName = 'Users'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "markdown",
+				"metadata": {
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"**Votes**"
+				]
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"tableName = 'Votes'\r\n",
+					"\r\n",
+					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
+					"\r\n",
+					"df_withDate = df.withColumn(\"year\", year(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"month\", month(df[\"CreationDate\"])) \\\r\n",
+					"                .withColumn(\"day\", dayofmonth(df[\"CreationDate\"]))\r\n",
+					"\r\n",
+					"df_withDate.write.format(\"delta\").partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").save(lakepath+goldpath+tableName)"
+				],
+				"execution_count": null
 			}
 		]
 	}
