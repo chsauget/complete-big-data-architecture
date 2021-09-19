@@ -101,6 +101,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"annotations": []
 			},
 			"dependsOn": [
@@ -118,7 +122,7 @@
 						"type": "ForEach",
 						"dependsOn": [
 							{
-								"activity": "Get Metadata - List 7z",
+								"activity": "Filter - Specific File",
 								"dependencyConditions": [
 									"Succeeded"
 								]
@@ -136,7 +140,7 @@
 									"type": "Copy",
 									"dependsOn": [],
 									"policy": {
-										"timeout": "0.06:00:00",
+										"timeout": "0.12:00:00",
 										"retry": 1,
 										"retryIntervalInSeconds": 120,
 										"secureOutput": false,
@@ -253,8 +257,35 @@
 								"type": "BinaryReadSettings"
 							}
 						}
+					},
+					{
+						"name": "Filter - Specific File",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata - List 7z",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata - List 7z').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@equals(item().name,pipeline().parameters.FileName)",
+								"type": "Expression"
+							}
+						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"Container": {
 						"type": "string",
@@ -267,6 +298,9 @@
 					"Account": {
 						"type": "string",
 						"defaultValue": "synapselakeapp"
+					},
+					"FileName": {
+						"type": "string"
 					}
 				},
 				"annotations": []
@@ -1029,6 +1063,10 @@
 						]
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"Container": {
 						"type": "string",
@@ -1198,6 +1236,10 @@
 						}
 					}
 				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
 				"parameters": {
 					"Container": {
 						"type": "string",
@@ -1659,7 +1701,7 @@
 							"name": "FlattenXml2Table"
 						}
 					],
-					"script": "source(output(\n\t\tbadges as (row as ({@Class} as short, {@Date} as string, {@Id} as integer, {@Name} as string, {@TagBased} as boolean, {@UserId} as short)[])\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'xml',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/xml',\n\tfileName: 'stackoverflow.com-Badges.xml',\n\tvalidationMode: 'none',\n\tnamespaces: true) ~> SrcBadgesXML\nSrcBadgesXML foldDown(unroll(badges.row, badges.row),\n\tmapColumn(\n\t\tClass = badges.row.{@Class},\n\t\tDate = badges.row.{@Date},\n\t\tId = badges.row.{@Id},\n\t\tName = badges.row.{@Name},\n\t\tTagBased = badges.row.{@TagBased},\n\t\tUserId = badges.row.{@UserId}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenXml2Table\nFlattenXml2Table sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/parquet/Badges',\n\ttruncate: true,\n\tcompressionCodec: 'snappy',\n\tumask: 0022,\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SinkParquet"
+					"script": "source(output(\n\t\tbadges as (row as ({@Class} as short, {@Date} as string, {@Id} as integer, {@Name} as string, {@TagBased} as boolean, {@UserId} as short)[])\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false,\n\tignoreNoFilesFound: false,\n\tformat: 'xml',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/xml',\n\tfileName: 'stackoverflow.com-Badges.xml',\n\tvalidationMode: 'none',\n\tnamespaces: true) ~> SrcBadgesXML\nSrcBadgesXML foldDown(unroll(badges.row, badges.row),\n\tmapColumn(\n\t\tClass = badges.row.{@Class},\n\t\tDate = badges.row.{@Date},\n\t\tId = badges.row.{@Id},\n\t\tName = badges.row.{@Name},\n\t\tTagBased = badges.row.{@TagBased},\n\t\tUserId = badges.row.{@UserId}\n\t),\n\tskipDuplicateMapInputs: false,\n\tskipDuplicateMapOutputs: false) ~> FlattenXml2Table\nFlattenXml2Table sink(allowSchemaDrift: true,\n\tvalidateSchema: false,\n\tformat: 'parquet',\n\tfileSystem: 'lake',\n\tfolderPath: 'StackOverflow/parquet/Badges',\n\ttruncate: true,\n\tcompressionCodec: 'snappy',\n\tumask: 0022,\n\tpreCommands: [],\n\tpostCommands: [],\n\tskipDuplicateMapInputs: true,\n\tskipDuplicateMapOutputs: true) ~> SinkParquet"
 				}
 			},
 			"dependsOn": [
@@ -1734,7 +1776,7 @@
 				"nbformat": 4,
 				"nbformat_minor": 2,
 				"bigDataPool": {
-					"referenceName": "spark3",
+					"referenceName": "spark",
 					"type": "BigDataPoolReference"
 				},
 				"sessionProperties": {
@@ -1751,76 +1793,95 @@
 				},
 				"metadata": {
 					"saveOutput": true,
+					"enableDebugMode": false,
 					"kernelspec": {
 						"name": "synapse_pyspark",
 						"display_name": "Synapse PySpark"
 					},
 					"language_info": {
-						"name": "python"
+						"name": "scala"
 					},
 					"a365ComputeOptions": {
-						"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark3",
-						"name": "spark3",
+						"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
+						"name": "spark",
 						"type": "Spark",
-						"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark3",
+						"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark",
 						"auth": {
 							"type": "AAD",
 							"authResource": "https://dev.azuresynapse.net"
 						},
-						"sparkVersion": "3.1",
-						"nodeCount": 3,
-						"cores": 4,
-						"memory": 28
+						"sparkVersion": "2.4",
+						"nodeCount": 5,
+						"cores": 16,
+						"memory": 112
 					}
 				},
 				"cells": [
 					{
 						"cell_type": "code",
-						"source": [
-							"df = spark.read.format(\"com.databricks.spark.xml\").option(\"rowTag\",\"row\").load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml')\r\n",
-							""
-						],
-						"outputs": [],
-						"execution_count": 2
-					},
-					{
-						"cell_type": "code",
 						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
+							"collapsed": false
 						},
 						"source": [
-							"import com.databricks.spark.xml._ "
-						],
-						"outputs": [],
-						"execution_count": 2
-					},
-					{
-						"cell_type": "code",
-						"metadata": {
-							"jupyter": {
-								"source_hidden": false,
-								"outputs_hidden": false
-							},
-							"nteract": {
-								"transient": {
-									"deleting": false
-								}
-							}
-						},
-						"source": [
-							"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-PostLinks.xml', format='xml')\r\n",
+							"df = spark.read.load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/parquet/stackoverflow.com-Tags.parquet', format='parquet')\r\n",
 							"display(df.limit(10))"
 						],
 						"outputs": [],
-						"execution_count": null
+						"execution_count": 3
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							},
+							"collapsed": false
+						},
+						"source": [
+							"from pyspark.sql.functions import year, month, dayofmonth, hour, minute, second\r\n",
+							"\r\n",
+							"df = spark.read.format('xml').options(rowTag='row').load('abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-Posts.xml')\r\n",
+							"\r\n",
+							"\r\n",
+							"df_final = df.withColumn(\"year\", year(df[\"_CreationDate\"])) \\\r\n",
+							"                .withColumn(\"month\", month(df[\"_CreationDate\"])) \\\r\n",
+							"                .withColumn(\"day\", dayofmonth(df[\"_CreationDate\"]))\r\n",
+							"\r\n",
+							"\r\n",
+							"df_final.write.partitionBy(\"year\",\"month\",\"day\").mode(\"overwrite\").parquet(\"abfss://lake@synapselakeapp.dfs.core.windows.net/Partitioned/Posts\")\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": 12
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"import com.databricks.spark.xml._\r\n",
+							"\r\n",
+							"val df = spark.read.option(\"rowTag\", \"row\").xml(\"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/xml/stackoverflow.com-Posts.xml\")\r\n",
+							"\r\n",
+							"df.write.format(\"parquet\").mode(\"overwrite\").save(\"abfss://lake@synapselakeapp.dfs.core.windows.net/Partitioned/Posts-scala\")"
+						],
+						"outputs": [],
+						"execution_count": 15
 					}
 				]
 			},
