@@ -276,7 +276,7 @@
 								"type": "Expression"
 							},
 							"condition": {
-								"value": "@equals(item().name,pipeline().parameters.FileName)",
+								"value": "@or(empty(pipeline().parameters.FileName)\n,equals(item().name,pipeline().parameters.FileName)\n)",
 								"type": "Expression"
 							}
 						}
