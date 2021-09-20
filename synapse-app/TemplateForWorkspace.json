@@ -300,8 +300,7 @@
 						"defaultValue": "synapselakeapp"
 					},
 					"FileName": {
-						"type": "string",
-						"defaultValue": "stackoverflow.com-Votes.7z"
+						"type": "string"
 					}
 				},
 				"annotations": []
