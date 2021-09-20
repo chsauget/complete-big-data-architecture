@@ -19,7 +19,7 @@
 					"value": "@dataset().FileName",
 					"type": "Expression"
 				},
-				"folderPath": "StackOverflow/parquet",
+				"folderPath": "StackOverflow/raw/History/Parquet",
 				"fileSystem": "lake"
 			},
 			"compressionCodec": "snappy"

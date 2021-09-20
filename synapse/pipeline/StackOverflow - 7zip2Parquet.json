@@ -174,7 +174,7 @@
 			},
 			"Folder": {
 				"type": "string",
-				"defaultValue": "StackOverflow/raw"
+				"defaultValue": "StackOverflow/raw/History/7z/"
 			},
 			"Account": {
 				"type": "string",
@@ -182,7 +182,7 @@
 			},
 			"FileName": {
 				"type": "string",
-				"defaultValue": "stackoverflow.com-PostLinks.7z"
+				"defaultValue": "stackoverflow.com-Votes.7z"
 			}
 		},
 		"annotations": []
