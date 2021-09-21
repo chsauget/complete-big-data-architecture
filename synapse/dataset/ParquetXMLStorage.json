@@ -15,10 +15,11 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobFSLocation",
-				"folderPath": {
-					"value": "@concat('StackOverflow/raw/History/Parquet/'\n,dataset().FileName\n)",
+				"fileName": {
+					"value": "@dataset().FileName",
 					"type": "Expression"
 				},
+				"folderPath": "StackOverflow/raw/History/Parquet/",
 				"fileSystem": "lake"
 			},
 			"compressionCodec": "snappy"
