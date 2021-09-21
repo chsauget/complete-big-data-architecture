@@ -173,7 +173,8 @@
 												"type": "AzureBlobFSWriteSettings"
 											},
 											"formatSettings": {
-												"type": "ParquetWriteSettings"
+												"type": "ParquetWriteSettings",
+												"maxRowsPerFile": 20000000
 											}
 										},
 										"enableStaging": false
@@ -1321,11 +1322,10 @@
 				"typeProperties": {
 					"location": {
 						"type": "AzureBlobFSLocation",
-						"fileName": {
-							"value": "@dataset().FileName",
+						"folderPath": {
+							"value": "@concat('StackOverflow/raw/History/Parquet/'\n,dataset().FileName\n)",
 							"type": "Expression"
 						},
-						"folderPath": "StackOverflow/raw/History/Parquet",
 						"fileSystem": "lake"
 					},
 					"compressionCodec": "snappy"
