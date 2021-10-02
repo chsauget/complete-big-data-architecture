@@ -30,7 +30,8 @@
 							"type": "AzureBlobFSWriteSettings"
 						},
 						"formatSettings": {
-							"type": "JsonWriteSettings"
+							"type": "JsonWriteSettings",
+							"filePattern": "arrayOfObjects"
 						}
 					},
 					"enableStaging": false
@@ -46,7 +47,7 @@
 						"referenceName": "Http2JsonBinary",
 						"type": "DatasetReference",
 						"parameters": {
-							"FileName": "posts/20211002"
+							"FileName": "posts/20211002.json"
 						}
 					}
 				]
