@@ -1,0 +1,15 @@
+{
+	"name": "RestStackOverflow",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "REST_StackOverflow",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "RestResource",
+		"typeProperties": {
+			"relativeUrl": "StackOverflowWrapper?urlquery=https%3A%2F%2Fapi.stackexchange.com%2F2.3%2Fposts%3Forder%3Ddesc%26sort%3Dactivity%26site%3Dstackoverflow%26key%3DAPAkVu3CjO26BUl5Q7BijA%28%28%26access_token%3DF6AptDaUQOiz01wQ5QeckA%29%29%26filter%3D%21aiRaBmwhgJ%2AAh6%26pagesize%3D100%26page%3D1%26fromdate%3D1632873600"
+		},
+		"schema": []
+	}
+}
