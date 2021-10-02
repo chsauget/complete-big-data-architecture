@@ -1,0 +1,28 @@
+{
+	"name": "Http2JsonBinary",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "synapse-app-WorkspaceDefaultStorage",
+			"type": "LinkedServiceReference"
+		},
+		"parameters": {
+			"FileName": {
+				"type": "string"
+			}
+		},
+		"annotations": [],
+		"type": "Json",
+		"typeProperties": {
+			"location": {
+				"type": "AzureBlobFSLocation",
+				"fileName": {
+					"value": "@dataset().FileName",
+					"type": "Expression"
+				},
+				"folderPath": "StackOverflow/raw/daily",
+				"fileSystem": "lake"
+			}
+		},
+		"schema": {}
+	}
+}

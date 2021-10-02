@@ -1,13 +1,13 @@
 {
-	"name": "Pipeline 1",
+	"name": "StackOverflow - Daily",
 	"properties": {
 		"activities": [
 			{
-				"name": "Data flow1",
-				"type": "ExecuteDataFlow",
+				"name": "Copy - Posts",
+				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "1.00:00:00",
+					"timeout": "7.00:00:00",
 					"retry": 0,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
@@ -15,16 +15,41 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
-					"dataflow": {
-						"referenceName": "Dataflow1",
-						"type": "DataFlowReference"
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"QueryParameters['urlquery']": "$.nextLink"
+						}
 					},
-					"compute": {
-						"coreCount": 32,
-						"computeType": "MemoryOptimized"
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings"
+						}
 					},
-					"traceLevel": "Fine"
-				}
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestStackOverflow",
+						"type": "DatasetReference"
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Http2JsonBinary",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": "posts/20211002"
+						}
+					}
+				]
 			}
 		],
 		"annotations": []
