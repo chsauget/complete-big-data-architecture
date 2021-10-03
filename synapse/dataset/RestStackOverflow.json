@@ -5,6 +5,11 @@
 			"referenceName": "REST_StackOverflow",
 			"type": "LinkedServiceReference"
 		},
+		"parameters": {
+			"UrlQuery": {
+				"type": "string"
+			}
+		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {

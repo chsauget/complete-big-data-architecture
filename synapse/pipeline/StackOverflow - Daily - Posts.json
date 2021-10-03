@@ -54,8 +54,42 @@
 						}
 					}
 				]
+			},
+			{
+				"name": "Web - KeyVault Secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					}
+				}
 			}
 		],
+		"parameters": {
+			"UrlQuery": {
+				"type": "string",
+				"defaultValue": "https://api.stackexchange.com/2.3/posts?order=desc&sort=activity&site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+			},
+			"Filter": {
+				"type": "string",
+				"defaultValue": "!7gW7W8.hCz.w3So2R6st)Yl1llSzODzke-"
+			}
+		},
+		"variables": {
+			"FinalUrl": {
+				"type": "String"
+			}
+		},
 		"folder": {
 			"name": "Daily"
 		},
