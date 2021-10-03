@@ -11,6 +11,12 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
+					},
+					{
+						"activity": "LKP - Last Post Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
 					}
 				],
 				"policy": {
@@ -90,6 +96,31 @@
 					"authentication": {
 						"type": "MSI",
 						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "LKP - Last Post Date",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlDWSource",
+						"sqlReaderQuery": "SELECT [LastPostDate] = DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime]))\n  FROM [dwh].[Posts]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQLOD_StackOverflowDwh_Generic",
+						"type": "DatasetReference"
 					}
 				}
 			}

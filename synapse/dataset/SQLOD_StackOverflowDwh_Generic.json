@@ -1,0 +1,12 @@
+{
+	"name": "SQLOD_StackOverflowDwh_Generic",
+	"properties": {
+		"linkedServiceName": {
+			"referenceName": "SQLOD_SynapseAPP",
+			"type": "LinkedServiceReference"
+		},
+		"annotations": [],
+		"type": "AzureSqlDWTable",
+		"schema": []
+	}
+}
