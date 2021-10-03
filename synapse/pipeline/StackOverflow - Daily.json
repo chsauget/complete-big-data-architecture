@@ -48,7 +48,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"FileName": {
-								"value": "posts/@formatDateTime({utcnow(),'yyyyMMdd')}/@formatDateTime({utcnow(),'hh-mm')}.json",
+								"value": "Posts/@formatDateTime({utcnow(),'yyyyMMdd')}/@formatDateTime({utcnow(),'hh-mm')}.json",
 								"type": "Expression"
 							}
 						}
