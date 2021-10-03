@@ -1,15 +1,15 @@
 {
 	"name": "SQLOD_SynapseAPP",
-	"type": "Microsoft.Synapse/workspaces/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureSqlDW",
 		"typeProperties": {
-			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=synapse-app-ondemand.sql.azuresynapse.net;Initial Catalog=AnalyticsDB"
+			"connectionString": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=synapse-app-ondemand.sql.azuresynapse.net;Initial Catalog=StackOverflowDwh"
 		},
 		"connectVia": {
 			"referenceName": "AutoResolveIntegrationRuntime",
 			"type": "IntegrationRuntimeReference"
 		}
-	}
+	},
+	"type": "Microsoft.Synapse/workspaces/linkedservices"
 }

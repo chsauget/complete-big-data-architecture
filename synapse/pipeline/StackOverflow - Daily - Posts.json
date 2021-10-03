@@ -1,0 +1,148 @@
+{
+	"name": "StackOverflow - Daily - Posts",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy - Posts",
+				"type": "Copy",
+				"dependsOn": [
+					{
+						"activity": "Web - KeyVault Secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					},
+					{
+						"activity": "LKP - Last Post Date",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "RestSource",
+						"httpRequestTimeout": "00:01:40",
+						"requestInterval": "00.00:00:00.010",
+						"requestMethod": "GET",
+						"paginationRules": {
+							"QueryParameters['urlquery']": "$.nextLink"
+						}
+					},
+					"sink": {
+						"type": "JsonSink",
+						"storeSettings": {
+							"type": "AzureBlobFSWriteSettings"
+						},
+						"formatSettings": {
+							"type": "JsonWriteSettings",
+							"filePattern": "setOfObjects"
+						}
+					},
+					"enableStaging": false
+				},
+				"inputs": [
+					{
+						"referenceName": "RestStackOverflow",
+						"type": "DatasetReference",
+						"parameters": {
+							"UrlQuery": {
+								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t,'{filter}'\n\t\t\t\t,pipeline().parameters.Filter\n\t\t\t)\n\t\t,'{key}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t)\n\t,'{access_token}'\n\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t)\n,'{date}'\n,activity('LKP - Last Post Date').output.firstRow.LastPostDate\n)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"outputs": [
+					{
+						"referenceName": "Http2JsonBinary",
+						"type": "DatasetReference",
+						"parameters": {
+							"FileName": {
+								"value": "Posts/@{formatDateTime(utcnow(),'yyyyMMdd')}/@{formatDateTime(utcnow(),'hh-mm')}.json",
+								"type": "Expression"
+							}
+						}
+					}
+				]
+			},
+			{
+				"name": "Web - KeyVault Secret",
+				"type": "WebActivity",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"url": "https://akv-app.vault.azure.net/secrets/StackOverflow-api?api-version=7.0",
+					"connectVia": {
+						"referenceName": "AutoResolveIntegrationRuntime",
+						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
+					}
+				}
+			},
+			{
+				"name": "LKP - Last Post Date",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "SqlDWSource",
+						"sqlReaderQuery": "SELECT [LastPostDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "SQLOD_StackOverflowDwh_Generic",
+						"type": "DatasetReference"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"UrlQuery": {
+				"type": "string",
+				"defaultValue": "https://api.stackexchange.com/2.3/posts?order=desc&sort=activity&site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+			},
+			"Filter": {
+				"type": "string",
+				"defaultValue": "!7gW7W8.hCz.w3So2R6st)Yl1llSzODzke-"
+			}
+		},
+		"variables": {
+			"test": {
+				"type": "String"
+			}
+		},
+		"folder": {
+			"name": "Daily"
+		},
+		"annotations": []
+	}
+}

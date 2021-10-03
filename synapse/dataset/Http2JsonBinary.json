@@ -19,7 +19,7 @@
 					"value": "@dataset().FileName",
 					"type": "Expression"
 				},
-				"folderPath": "StackOverflow/raw/daily",
+				"folderPath": "StackOverflow/raw/Daily",
 				"fileSystem": "lake"
 			}
 		},
