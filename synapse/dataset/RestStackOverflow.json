@@ -14,7 +14,7 @@
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "@dataset().UrlQuery",
+				"value": "StackOverflowWrapper?urlquery=@{encodeUriComponent(dataset().UrlQuery)}",
 				"type": "Expression"
 			}
 		},
