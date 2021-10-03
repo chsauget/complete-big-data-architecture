@@ -57,7 +57,7 @@
 					}
 				},
 				"source": [
-					"df_json = spark.read.json(json_path)"
+					"df_json = spark.read.json(rawpath)"
 				],
 				"execution_count": null
 			}
