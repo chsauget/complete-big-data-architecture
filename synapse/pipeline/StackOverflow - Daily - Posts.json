@@ -17,12 +17,6 @@
 						"dependencyConditions": [
 							"Succeeded"
 						]
-					},
-					{
-						"activity": "Set variable1",
-						"dependencyConditions": [
-							"Succeeded"
-						]
 					}
 				],
 				"policy": {
@@ -127,32 +121,6 @@
 					"dataset": {
 						"referenceName": "SQLOD_StackOverflowDwh_Generic",
 						"type": "DatasetReference"
-					}
-				}
-			},
-			{
-				"name": "Set variable1",
-				"type": "SetVariable",
-				"dependsOn": [
-					{
-						"activity": "LKP - Last Post Date",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					},
-					{
-						"activity": "Web - KeyVault Secret",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
-				"userProperties": [],
-				"typeProperties": {
-					"variableName": "test",
-					"value": {
-						"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t,'{filter}'\n\t\t\t\t,pipeline().parameters.Filter\n\t\t\t)\n\t\t,'{key}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t)\n\t,'{access_token}'\n\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t)\n,'{date}'\n,activity('LKP - Last Post Date').output.firstRow.LastPostDate\n)",
-						"type": "Expression"
 					}
 				}
 			}
