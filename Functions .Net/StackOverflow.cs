@@ -11,33 +11,45 @@ using System.Net.Http;
 using System.Linq;
 using System.Net;
 using System.Threading;
+using Polly;
 namespace Company.Function
 {
     
+    
     public static class StackOverflow
     {
+        private const int MAX_RETRIES = 10;
+
+        private static Polly.Retry.AsyncRetryPolicy GetAsyncRetryPolicy(ILogger log){
+            return Policy
+                    .Handle<Exception>()
+                    .WaitAndRetryAsync(MAX_RETRIES, 
+                        retryAttempt =>
+                          {
+                              double waitTimeInSeconds = 0 + Math.Pow(2, retryAttempt);
+                              log.LogWarning($"Call {retryAttempt}/{MAX_RETRIES} failed ! Trying again in {waitTimeInSeconds} seconds");
+                              return TimeSpan.FromSeconds(waitTimeInSeconds);
+                          },
+                          (exception, timespan) => log.LogWarning($"Encountered exception : {exception.Message}")
+                      );
+        }
         [FunctionName("StackOverflowWrapper")]
         public static async Task<IActionResult> StackOverflowWrapper(
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "StackOverflowWrapper")] HttpRequest req
             , ILogger log)
         {
-            HttpResponseMessage response = new HttpResponseMessage();
+
             try
             {
                 
             
                 string urlquery = req.Query["urlquery"];
                 log.LogInformation(urlquery);
-                HttpClientHandler handler = new HttpClientHandler()
-                {
-                    AutomaticDecompression = DecompressionMethods.GZip
-                };
-                HttpClient client = new HttpClient(handler);
-                response = await client.GetAsync(urlquery);
-                response.EnsureSuccessStatusCode();
-                StackOverflowDTO so = new StackOverflowDTO();
                 
-                so = await response.Content.ReadAsAsync<StackOverflowDTO>();
+                StackOverflowDTO so = await GetAsyncRetryPolicy(log).ExecuteAsync(() => GetStackOverflowData(urlquery) );
+                //response = await client.GetAsync(urlquery);
+                
+
                 
                 if(so.has_more)
                 {
@@ -46,13 +58,31 @@ namespace Company.Function
                     queryParts["page"] = (int.Parse(queryParts["page"])+1).ToString();
                     so.nextLink =  queryParts.ToString();
                 }
-                Thread.Sleep(5000);
                 return new OkObjectResult(so);
             }catch(Exception e)
             {
-                log.LogInformation(await response.Content.ReadAsStringAsync());
+                log.LogInformation(e.Message);
                 return new BadRequestObjectResult(e.Message);
             }
+        }
+        public static async Task<StackOverflowDTO> GetStackOverflowData(string urlquery)
+        {
+                HttpClientHandler handler = new HttpClientHandler()
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip
+                };
+                HttpClient client = new HttpClient(handler);
+
+                var response = await client.GetAsync(urlquery);
+
+                if(!response.IsSuccessStatusCode){
+                    throw new Exception(await response.Content.ReadAsStringAsync());
+                }
+                
+                return await response.Content.ReadAsAsync<StackOverflowDTO>();
+
+                
+            
         }
         public class StackOverflowDTO
         {
