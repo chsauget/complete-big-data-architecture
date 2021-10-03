@@ -7,9 +7,9 @@
 				"type": "Copy",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
-					"retryIntervalInSeconds": 30,
+					"timeout": "0.01:00:00",
+					"retry": 3,
+					"retryIntervalInSeconds": 60,
 					"secureOutput": false,
 					"secureInput": false
 				},
@@ -31,7 +31,7 @@
 						},
 						"formatSettings": {
 							"type": "JsonWriteSettings",
-							"filePattern": "arrayOfObjects"
+							"filePattern": "setOfObjects"
 						}
 					},
 					"enableStaging": false
@@ -47,7 +47,10 @@
 						"referenceName": "Http2JsonBinary",
 						"type": "DatasetReference",
 						"parameters": {
-							"FileName": "posts/20211002.json"
+							"FileName": {
+								"value": "posts/@formatDateTime({utcnow(),'yyyyMMdd')}/@formatDateTime({utcnow(),'hh-mm')}.json",
+								"type": "Expression"
+							}
 						}
 					}
 				]
