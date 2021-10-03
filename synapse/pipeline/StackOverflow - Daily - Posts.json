@@ -5,7 +5,14 @@
 			{
 				"name": "Copy - Posts",
 				"type": "Copy",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "Web - KeyVault Secret",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"policy": {
 					"timeout": "0.01:00:00",
 					"retry": 3,
@@ -68,9 +75,15 @@
 				},
 				"userProperties": [],
 				"typeProperties": {
+					"url": "https://akv-app.vault.azure.net/secrets/StackOverflow-api?api-version=7.0",
 					"connectVia": {
 						"referenceName": "AutoResolveIntegrationRuntime",
 						"type": "IntegrationRuntimeReference"
+					},
+					"method": "GET",
+					"authentication": {
+						"type": "MSI",
+						"resource": "https://vault.azure.net"
 					}
 				}
 			}
