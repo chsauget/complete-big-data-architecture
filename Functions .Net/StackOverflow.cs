@@ -10,6 +10,7 @@ using System.Web;
 using System.Net.Http;
 using System.Linq;
 using System.Net;
+using System.Threading;
 namespace Company.Function
 {
     
@@ -20,28 +21,38 @@ namespace Company.Function
             [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = "StackOverflowWrapper")] HttpRequest req
             , ILogger log)
         {
-
-            string urlquery = req.Query["urlquery"];
-            log.LogInformation(urlquery);
-            HttpClientHandler handler = new HttpClientHandler()
+            HttpResponseMessage response = new HttpResponseMessage();
+            try
             {
-                AutomaticDecompression = DecompressionMethods.GZip
-            };
-            HttpClient client = new HttpClient(handler);
-            HttpResponseMessage response = await client.GetAsync(urlquery);
-            response.EnsureSuccessStatusCode();
-            StackOverflowDTO so = new StackOverflowDTO();
+                
             
-            so = await response.Content.ReadAsAsync<StackOverflowDTO>();
-            
-            if(so.has_more)
+                string urlquery = req.Query["urlquery"];
+                log.LogInformation(urlquery);
+                HttpClientHandler handler = new HttpClientHandler()
+                {
+                    AutomaticDecompression = DecompressionMethods.GZip
+                };
+                HttpClient client = new HttpClient(handler);
+                response = await client.GetAsync(urlquery);
+                response.EnsureSuccessStatusCode();
+                StackOverflowDTO so = new StackOverflowDTO();
+                
+                so = await response.Content.ReadAsAsync<StackOverflowDTO>();
+                
+                if(so.has_more)
+                {
+                    Uri uri = new Uri(urlquery);
+                    var queryParts = HttpUtility.ParseQueryString(urlquery);
+                    queryParts["page"] = (int.Parse(queryParts["page"])+1).ToString();
+                    so.nextLink =  queryParts.ToString();
+                }
+                Thread.Sleep(5000);
+                return new OkObjectResult(so);
+            }catch(Exception e)
             {
-                Uri uri = new Uri(urlquery);
-                var queryParts = HttpUtility.ParseQueryString(urlquery);
-                queryParts["page"] = (int.Parse(queryParts["page"])+1).ToString();
-                so.nextLink =  queryParts.ToString();
+                log.LogInformation(await response.Content.ReadAsStringAsync());
+                return new BadRequestObjectResult(e.Message);
             }
-            return new OkObjectResult(so);
         }
         public class StackOverflowDTO
         {
