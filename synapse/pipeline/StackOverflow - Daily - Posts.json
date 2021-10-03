@@ -46,7 +46,13 @@
 				"inputs": [
 					{
 						"referenceName": "RestStackOverflow",
-						"type": "DatasetReference"
+						"type": "DatasetReference",
+						"parameters": {
+							"UrlQuery": {
+								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\tpipeline().parameters.UrlQuery\n\t\t\t,'{filter}'\n\t\t\t,pipeline().parameters.Filter\n\t\t)\n\t,'{key}'\n\t,json(activity('Web - KeyVault Secret').output.value).key\n\t)\n,'{access_token}'\n,json(activity('Web - KeyVault Secret').output.value).access_token\n)",
+								"type": "Expression"
+							}
+						}
 					}
 				],
 				"outputs": [
@@ -96,11 +102,6 @@
 			"Filter": {
 				"type": "string",
 				"defaultValue": "!7gW7W8.hCz.w3So2R6st)Yl1llSzODzke-"
-			}
-		},
-		"variables": {
-			"FinalUrl": {
-				"type": "String"
 			}
 		},
 		"folder": {
