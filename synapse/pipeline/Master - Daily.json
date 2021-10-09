@@ -23,6 +23,28 @@
 						"Object": "badges/recipients"
 					}
 				}
+			},
+			{
+				"name": "EP - Posts",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ",
+						"MaxDateQuery": "  SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
+						"Object": "posts"
+					}
+				}
 			}
 		],
 		"parameters": {
