@@ -55,7 +55,7 @@
 					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
 					"df.show(10)"
 				],
-				"execution_count": 7
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -79,7 +79,7 @@
 					"    .setInputCol('Body') \\\r\n",
 					"    .setOutputCol('BodyClean')"
 				],
-				"execution_count": 8
+				"execution_count": 2
 			}
 		]
 	}
