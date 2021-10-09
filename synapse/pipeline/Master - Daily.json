@@ -28,14 +28,7 @@
 			{
 				"name": "EP - Posts",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Badges",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
