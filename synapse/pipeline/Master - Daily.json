@@ -1,0 +1,39 @@
+{
+	"name": "Master - Daily",
+	"properties": {
+		"activities": [
+			{
+				"name": "EP - Badges",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!3tlXYBI.hSlGyD3oc",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([DateTime])) AS VARCHAR)\n  FROM [dwh].[Badges]",
+						"Object": "badges/recipients"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"BaseUrl": {
+				"type": "string",
+				"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+			}
+		},
+		"folder": {
+			"name": "Daily"
+		},
+		"annotations": []
+	}
+}
