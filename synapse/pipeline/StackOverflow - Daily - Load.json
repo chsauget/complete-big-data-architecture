@@ -32,7 +32,7 @@
 						"type": "RestSource",
 						"httpRequestTimeout": "00:10:00",
 						"requestInterval": {
-							"value": "@{pipeline().parameters.BackoffSeconds}*1000",
+							"value": "@{pipeline().parameters.BackoffSeconds}",
 							"type": "Expression"
 						},
 						"requestMethod": "GET",
@@ -148,7 +148,7 @@
 				"type": "string"
 			},
 			"BackoffSeconds": {
-				"type": "int"
+				"type": "string"
 			}
 		},
 		"folder": {

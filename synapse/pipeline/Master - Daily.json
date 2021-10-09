@@ -21,7 +21,7 @@
 						"Filter": "!3tlXYBI.hSlGyD3oc",
 						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([DateTime])) AS VARCHAR)\n  FROM [dwh].[Badges]",
 						"Object": "badges/recipients",
-						"BackoffSeconds": "5"
+						"BackoffSeconds": "5000"
 					}
 				}
 			},
@@ -50,7 +50,31 @@
 						},
 						"Filter": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ",
 						"MaxDateQuery": "  SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
-						"Object": "posts"
+						"Object": "posts",
+						"BackoffSeconds": "10500"
+					}
+				}
+			},
+			{
+				"name": "EP - Comments",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!Fc6b9.M25voXPC5GTjBjeyMd)l",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Comments]",
+						"Object": "comments",
+						"BackoffSeconds": "5000"
 					}
 				}
 			}
