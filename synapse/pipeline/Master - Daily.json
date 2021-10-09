@@ -20,14 +20,22 @@
 						},
 						"Filter": "!3tlXYBI.hSlGyD3oc",
 						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([DateTime])) AS VARCHAR)\n  FROM [dwh].[Badges]",
-						"Object": "badges/recipients"
+						"Object": "badges/recipients",
+						"BackoffSeconds": "5"
 					}
 				}
 			},
 			{
 				"name": "EP - Posts",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Badges",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
