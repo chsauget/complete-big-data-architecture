@@ -32,6 +32,9 @@
 		"AzureMLService1_properties_typeProperties_tenant": {
 			"value": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b"
 		},
+		"REST_StackOverflow_properties_typeProperties_url": {
+			"value": "https://net-core-for-big-data-premium.azurewebsites.net/api/"
+		},
 		"akv_app_properties_typeProperties_baseUrl": {
 			"value": "https://akv-app.vault.azure.net/"
 		},

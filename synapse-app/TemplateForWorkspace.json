@@ -43,6 +43,10 @@
 			"type": "string",
 			"defaultValue": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b"
 		},
+		"REST_StackOverflow_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://net-core-for-big-data-premium.azurewebsites.net/api/"
+		},
 		"akv_app_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://akv-app.vault.azure.net/"
@@ -65,17 +69,89 @@
 	},
 	"resources": [
 		{
-			"name": "[concat(parameters('workspaceName'), '/Pipeline 1')]",
+			"name": "[concat(parameters('workspaceName'), '/StackOverflow - Daily - Posts')]",
 			"type": "Microsoft.Synapse/workspaces/pipelines",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"activities": [
 					{
-						"name": "Data flow1",
-						"type": "ExecuteDataFlow",
+						"name": "Copy - Posts",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Web - KeyVault Secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "LKP - Last Post Date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:01:40",
+								"requestInterval": "00.00:00:00.010",
+								"requestMethod": "GET",
+								"paginationRules": {
+									"QueryParameters['urlquery']": "$.nextLink"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestStackOverflow",
+								"type": "DatasetReference",
+								"parameters": {
+									"UrlQuery": {
+										"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t,'{filter}'\n\t\t\t\t,pipeline().parameters.Filter\n\t\t\t)\n\t\t,'{key}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t)\n\t,'{access_token}'\n\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t)\n,'{date}'\n,activity('LKP - Last Post Date').output.firstRow.LastPostDate\n)",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Http2JsonBinary",
+								"type": "DatasetReference",
+								"parameters": {
+									"FileName": {
+										"value": "Posts/@{formatDateTime(utcnow(),'yyyyMMdd')}/@{formatDateTime(utcnow(),'hh-mm')}.json",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Web - KeyVault Secret",
+						"type": "WebActivity",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "1.00:00:00",
+							"timeout": "7.00:00:00",
 							"retry": 0,
 							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
@@ -83,201 +159,42 @@
 						},
 						"userProperties": [],
 						"typeProperties": {
-							"dataflow": {
-								"referenceName": "Dataflow1",
-								"type": "DataFlowReference",
-								"parameters": {},
-								"datasetParameters": {
-									"SrcBadgesXML": {},
-									"SinkParquet": {}
-								}
+							"url": "https://akv-app.vault.azure.net/secrets/StackOverflow-api?api-version=7.0",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
 							},
-							"staging": {},
-							"compute": {
-								"coreCount": 32,
-								"computeType": "MemoryOptimized"
-							},
-							"traceLevel": "Fine"
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"annotations": []
-			},
-			"dependsOn": [
-				"[concat(variables('workspaceId'), '/dataflows/Dataflow1')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('workspaceName'), '/StackOverflow - 7zip2Parquet')]",
-			"type": "Microsoft.Synapse/workspaces/pipelines",
-			"apiVersion": "2019-06-01-preview",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEach - 7zip Files",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "Filter - Specific File",
-								"dependencyConditions": [
-									"Succeeded"
-								]
+							"method": "GET",
+							"headers": {},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
 							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Filter - Specific File').output.Value",
-								"type": "Expression"
-							},
-							"activities": [
-								{
-									"name": "Copy - UnZip Files 2 Parquet",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 1,
-										"retryIntervalInSeconds": 120,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [
-										{
-											"name": "Source",
-											"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent(item().name)\n)}"
-										},
-										{
-											"name": "Destination",
-											"value": "lake/StackOverflow/parquet/@{uriComponent(replace(item().name,'.7z','.parquet'))}"
-										}
-									],
-									"typeProperties": {
-										"source": {
-											"type": "JsonSource",
-											"storeSettings": {
-												"type": "HttpReadSettings",
-												"requestMethod": "GET"
-											},
-											"formatSettings": {
-												"type": "JsonReadSettings"
-											}
-										},
-										"sink": {
-											"type": "ParquetSink",
-											"storeSettings": {
-												"type": "AzureBlobFSWriteSettings"
-											},
-											"formatSettings": {
-												"type": "ParquetWriteSettings"
-											}
-										},
-										"enableStaging": false
-									},
-									"inputs": [
-										{
-											"referenceName": "Json1",
-											"type": "DatasetReference",
-											"parameters": {
-												"Account": {
-													"value": "@uriComponent(pipeline().parameters.Account)",
-													"type": "Expression"
-												},
-												"Container": {
-													"value": "@uriComponent(pipeline().parameters.Container)",
-													"type": "Expression"
-												},
-												"Folder": {
-													"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
-													"type": "Expression"
-												},
-												"FileName": {
-													"value": "@uriComponent(item().name)",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "ParquetXMLStorage",
-											"type": "DatasetReference",
-											"parameters": {
-												"FileName": {
-													"value": "@uriComponent(replace(item().name,'.7z','.parquet'))",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
 						}
 					},
 					{
-						"name": "Get Metadata - List 7z",
-						"type": "GetMetadata",
+						"name": "LKP - Last Post Date",
+						"type": "Lookup",
 						"dependsOn": [],
 						"policy": {
-							"timeout": "0.00:15:00",
+							"timeout": "0.01:00:00",
 							"retry": 3,
-							"retryIntervalInSeconds": 90,
+							"retryIntervalInSeconds": 30,
 							"secureOutput": false,
 							"secureInput": false
 						},
 						"userProperties": [],
 						"typeProperties": {
+							"source": {
+								"type": "SqlDWSource",
+								"sqlReaderQuery": "SELECT [LastPostDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
 							"dataset": {
-								"referenceName": "ZipXml",
+								"referenceName": "SQLOD_StackOverflowDwh_Generic",
 								"type": "DatasetReference",
-								"parameters": {
-									"container": {
-										"value": "@pipeline().parameters.Container",
-										"type": "Expression"
-									},
-									"folder": {
-										"value": "@pipeline().parameters.Folder",
-										"type": "Expression"
-									}
-								}
-							},
-							"fieldList": [
-								"childItems"
-							],
-							"storeSettings": {
-								"type": "AzureBlobFSReadSettings",
-								"recursive": true,
-								"enablePartitionDiscovery": false
-							},
-							"formatSettings": {
-								"type": "BinaryReadSettings"
-							}
-						}
-					},
-					{
-						"name": "Filter - Specific File",
-						"type": "Filter",
-						"dependsOn": [
-							{
-								"activity": "Get Metadata - List 7z",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('Get Metadata - List 7z').output.childItems",
-								"type": "Expression"
-							},
-							"condition": {
-								"value": "@or(empty(pipeline().parameters.FileName)\n,equals(item().name,pipeline().parameters.FileName)\n)",
-								"type": "Expression"
+								"parameters": {}
 							}
 						}
 					}
@@ -287,28 +204,30 @@
 					"cancelAfter": {}
 				},
 				"parameters": {
-					"Container": {
+					"UrlQuery": {
 						"type": "string",
-						"defaultValue": "lake"
+						"defaultValue": "https://api.stackexchange.com/2.3/posts?order=desc&sort=activity&site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
 					},
-					"Folder": {
+					"Filter": {
 						"type": "string",
-						"defaultValue": "StackOverflow/raw/History/7z/"
-					},
-					"Account": {
-						"type": "string",
-						"defaultValue": "synapselakeapp"
-					},
-					"FileName": {
-						"type": "string"
+						"defaultValue": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ"
 					}
+				},
+				"variables": {
+					"test": {
+						"type": "String"
+					}
+				},
+				"folder": {
+					"name": "Daily"
 				},
 				"annotations": []
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/datasets/ZipXml')]",
-				"[concat(variables('workspaceId'), '/datasets/Json1')]",
-				"[concat(variables('workspaceId'), '/datasets/ParquetXMLStorage')]"
+				"[concat(variables('workspaceId'), '/datasets/RestStackOverflow')]",
+				"[concat(variables('workspaceId'), '/datasets/Http2JsonBinary')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/datasets/SQLOD_StackOverflowDwh_Generic')]"
 			]
 		},
 		{
@@ -1263,24 +1182,15 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('workspaceName'), '/Json1')]",
+			"name": "[concat(parameters('workspaceName'), '/Http2JsonBinary')]",
 			"type": "Microsoft.Synapse/workspaces/datasets",
 			"apiVersion": "2019-06-01-preview",
 			"properties": {
 				"linkedServiceName": {
-					"referenceName": "Azure Function API",
+					"referenceName": "synapse-app-WorkspaceDefaultStorage",
 					"type": "LinkedServiceReference"
 				},
 				"parameters": {
-					"Account": {
-						"type": "string"
-					},
-					"Container": {
-						"type": "string"
-					},
-					"Folder": {
-						"type": "string"
-					},
 					"FileName": {
 						"type": "string"
 					}
@@ -1289,17 +1199,19 @@
 				"type": "Json",
 				"typeProperties": {
 					"location": {
-						"type": "HttpServerLocation",
-						"relativeUrl": {
-							"value": "@concat('/api/SevenZipV2/'\n,dataset().Account\n,'/'\n,dataset().Container\n,'/'\n,dataset().Folder\n,'/'\n,dataset().FileName\n)",
+						"type": "AzureBlobFSLocation",
+						"fileName": {
+							"value": "@dataset().FileName",
 							"type": "Expression"
-						}
+						},
+						"folderPath": "StackOverflow/raw/Daily",
+						"fileSystem": "lake"
 					}
 				},
 				"schema": {}
 			},
 			"dependsOn": [
-				"[concat(variables('workspaceId'), '/linkedServices/Azure Function API')]"
+				"[concat(variables('workspaceId'), '/linkedServices/synapse-app-WorkspaceDefaultStorage')]"
 			]
 		},
 		{
@@ -1334,6 +1246,52 @@
 			},
 			"dependsOn": [
 				"[concat(variables('workspaceId'), '/linkedServices/synapse-app-WorkspaceDefaultStorage')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/RestStackOverflow')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "REST_StackOverflow",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"UrlQuery": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "RestResource",
+				"typeProperties": {
+					"relativeUrl": {
+						"value": "StackOverflowWrapper?urlquery=@{encodeUriComponent(dataset().UrlQuery)}",
+						"type": "Expression"
+					}
+				},
+				"schema": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/REST_StackOverflow')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SQLOD_StackOverflowDwh_Generic')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "SQLOD_SynapseAPP",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlDWTable",
+				"schema": [],
+				"typeProperties": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/SQLOD_SynapseAPP')]"
 			]
 		},
 		{
@@ -1541,6 +1499,27 @@
 				"type": "CosmosDb",
 				"typeProperties": {
 					"connectionString": "[parameters('CosmosDb_connectionString')]"
+				},
+				"connectVia": {
+					"referenceName": "AutoResolveIntegrationRuntime",
+					"type": "IntegrationRuntimeReference"
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/REST_StackOverflow')]",
+			"type": "Microsoft.Synapse/workspaces/linkedServices",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"annotations": [],
+				"type": "RestService",
+				"typeProperties": {
+					"url": "[parameters('REST_StackOverflow_properties_typeProperties_url')]",
+					"enableServerCertificateValidation": true,
+					"authenticationType": "Anonymous"
 				},
 				"connectVia": {
 					"referenceName": "AutoResolveIntegrationRuntime",
@@ -1834,6 +1813,76 @@
 					"resultLimit": 5000
 				},
 				"type": "SqlQuery"
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Daily - Posts')]",
+			"type": "Microsoft.Synapse/workspaces/notebooks",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"folder": {
+					"name": "StackOverflow"
+				},
+				"nbformat": 4,
+				"nbformat_minor": 2,
+				"sessionProperties": {
+					"driverMemory": "28g",
+					"driverCores": 4,
+					"executorMemory": "28g",
+					"executorCores": 4,
+					"numExecutors": 2,
+					"conf": {
+						"spark.dynamicAllocation.enabled": "false",
+						"spark.dynamicAllocation.minExecutors": "2",
+						"spark.dynamicAllocation.maxExecutors": "2"
+					}
+				},
+				"metadata": {
+					"saveOutput": true,
+					"enableDebugMode": false,
+					"kernelspec": {
+						"name": "synapse_sparksql",
+						"display_name": "sql"
+					},
+					"language_info": {
+						"name": "sql"
+					}
+				},
+				"cells": [
+					{
+						"cell_type": "code",
+						"source": [
+							"from pyspark.sql.functions import *\r\n",
+							"from pyspark.sql.types import *\r\n",
+							"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
+							"rawpath = \"raw/Daily/Posts/*/*.json\"\r\n",
+							"golpath = \"gold/\"\r\n",
+							""
+						],
+						"outputs": [],
+						"execution_count": null
+					},
+					{
+						"cell_type": "code",
+						"metadata": {
+							"jupyter": {
+								"source_hidden": false,
+								"outputs_hidden": false
+							},
+							"nteract": {
+								"transient": {
+									"deleting": false
+								}
+							}
+						},
+						"source": [
+							"df_json = spark.read.json(rawpath)"
+						],
+						"outputs": [],
+						"execution_count": null
+					}
+				]
 			},
 			"dependsOn": []
 		},
@@ -7670,6 +7719,589 @@
 			},
 			"dependsOn": [],
 			"location": "northeurope"
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/Master - Daily')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "EP - Badges",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "EP - Tags",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "StackOverflow - Daily - Load",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"UrlQuery": {
+									"value": "@pipeline().parameters.BaseUrl",
+									"type": "Expression"
+								},
+								"Filter": "!3tlXYBI.hSlGyD3oc",
+								"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([DateTime])) AS VARCHAR)\n  FROM [dwh].[Badges]",
+								"Object": "badges/recipients",
+								"BackoffSeconds": "5000"
+							}
+						}
+					},
+					{
+						"name": "EP - Posts",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "EP - Tags",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "StackOverflow - Daily - Load",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"UrlQuery": {
+									"value": "@pipeline().parameters.BaseUrl",
+									"type": "Expression"
+								},
+								"Filter": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ",
+								"MaxDateQuery": "  SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
+								"Object": "posts",
+								"BackoffSeconds": "10500"
+							}
+						}
+					},
+					{
+						"name": "EP - Comments",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "EP - Tags",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "StackOverflow - Daily - Load",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"UrlQuery": {
+									"value": "@pipeline().parameters.BaseUrl",
+									"type": "Expression"
+								},
+								"Filter": "!Fc6b9.M25voXPC5GTjBjeyMd)l",
+								"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Comments]",
+								"Object": "comments",
+								"BackoffSeconds": "5000"
+							}
+						}
+					},
+					{
+						"name": "EP - Tags",
+						"type": "ExecutePipeline",
+						"dependsOn": [],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "StackOverflow - Daily - Load",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"UrlQuery": {
+									"value": "@pipeline().parameters.BaseUrl",
+									"type": "Expression"
+								},
+								"Filter": "!*MO(WDa3IX-qd)Aj",
+								"MaxDateQuery": "SELECT [LastDate] = CAST(0 AS VARCHAR(20))",
+								"Object": "tags",
+								"BackoffSeconds": "1000"
+							}
+						}
+					},
+					{
+						"name": "EP - Users",
+						"type": "ExecutePipeline",
+						"dependsOn": [
+							{
+								"activity": "EP - Tags",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"pipeline": {
+								"referenceName": "StackOverflow - Daily - Load",
+								"type": "PipelineReference"
+							},
+							"waitOnCompletion": true,
+							"parameters": {
+								"UrlQuery": {
+									"value": "@pipeline().parameters.BaseUrl",
+									"type": "Expression"
+								},
+								"Filter": "!4-M_0EdrCcvZ7suG-",
+								"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX(LastAccessDate)) AS VARCHAR)\n  FROM [dwh].[Users]",
+								"Object": "users",
+								"BackoffSeconds": "10000"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"BaseUrl": {
+						"type": "string",
+						"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+					}
+				},
+				"folder": {
+					"name": "Daily"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/pipelines/StackOverflow - Daily - Load')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/StackOverflow - Daily - Load')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "Copy - StackOverflow",
+						"type": "Copy",
+						"dependsOn": [
+							{
+								"activity": "Web - KeyVault Secret",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							},
+							{
+								"activity": "LKP - Last Date",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"policy": {
+							"timeout": "0.12:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 60,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "RestSource",
+								"httpRequestTimeout": "00:10:00",
+								"requestInterval": {
+									"value": "@{pipeline().parameters.BackoffSeconds}",
+									"type": "Expression"
+								},
+								"requestMethod": "GET",
+								"paginationRules": {
+									"QueryParameters['urlquery']": "$.nextLink"
+								}
+							},
+							"sink": {
+								"type": "JsonSink",
+								"storeSettings": {
+									"type": "AzureBlobFSWriteSettings"
+								},
+								"formatSettings": {
+									"type": "JsonWriteSettings",
+									"filePattern": "setOfObjects"
+								}
+							},
+							"enableStaging": false
+						},
+						"inputs": [
+							{
+								"referenceName": "RestStackOverflow",
+								"type": "DatasetReference",
+								"parameters": {
+									"UrlQuery": {
+										"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\treplace(\n\t\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t\t,'{filter}'\n\t\t\t\t\t,pipeline().parameters.Filter\n\t\t\t\t)\n\t\t\t,'{key}'\n\t\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t\t)\n\t\t,'{access_token}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t\t)\n\t,'{date}'\n\t,activity('LKP - Last Date').output.firstRow.LastDate\n\t)\n,'{object}'\n,pipeline().parameters.Object\n)",
+										"type": "Expression"
+									}
+								}
+							}
+						],
+						"outputs": [
+							{
+								"referenceName": "Http2JsonBinary",
+								"type": "DatasetReference",
+								"parameters": {
+									"FileName": {
+										"value": "@{pipeline().parameters.Object}/@{formatDateTime(utcnow(),'yyyyMMdd')}/@{formatDateTime(utcnow(),'hh-mm')}.json",
+										"type": "Expression"
+									}
+								}
+							}
+						]
+					},
+					{
+						"name": "Web - KeyVault Secret",
+						"type": "WebActivity",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:01:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"url": "https://akv-app.vault.azure.net/secrets/StackOverflow-api?api-version=7.0",
+							"connectVia": {
+								"referenceName": "AutoResolveIntegrationRuntime",
+								"type": "IntegrationRuntimeReference"
+							},
+							"method": "GET",
+							"headers": {},
+							"authentication": {
+								"type": "MSI",
+								"resource": "https://vault.azure.net"
+							}
+						}
+					},
+					{
+						"name": "LKP - Last Date",
+						"type": "Lookup",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.01:00:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"source": {
+								"type": "SqlDWSource",
+								"sqlReaderQuery": {
+									"value": "@pipeline().parameters.MaxDateQuery",
+									"type": "Expression"
+								},
+								"queryTimeout": "02:00:00",
+								"partitionOption": "None"
+							},
+							"dataset": {
+								"referenceName": "SQLOD_StackOverflowDwh_Generic",
+								"type": "DatasetReference",
+								"parameters": {}
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"UrlQuery": {
+						"type": "string",
+						"defaultValue": "https://api.stackexchange.com/2.3/posts?order=desc&sort=activity&site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+					},
+					"Filter": {
+						"type": "string",
+						"defaultValue": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ"
+					},
+					"MaxDateQuery": {
+						"type": "string",
+						"defaultValue": "SELECT [LastPostDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)   FROM [dwh].[Posts]"
+					},
+					"Object": {
+						"type": "string"
+					},
+					"BackoffSeconds": {
+						"type": "string"
+					}
+				},
+				"folder": {
+					"name": "Daily"
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/RestStackOverflow')]",
+				"[concat(variables('workspaceId'), '/datasets/Http2JsonBinary')]",
+				"[concat(variables('workspaceId'), '/integrationRuntimes/AutoResolveIntegrationRuntime')]",
+				"[concat(variables('workspaceId'), '/datasets/SQLOD_StackOverflowDwh_Generic')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/SevenZipAPI')]",
+			"type": "Microsoft.Synapse/workspaces/datasets",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "Azure Function API",
+					"type": "LinkedServiceReference"
+				},
+				"parameters": {
+					"Account": {
+						"type": "string"
+					},
+					"Container": {
+						"type": "string"
+					},
+					"Folder": {
+						"type": "string"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": [],
+				"type": "Json",
+				"typeProperties": {
+					"location": {
+						"type": "HttpServerLocation",
+						"relativeUrl": {
+							"value": "@concat('/api/SevenZipV2/'\n,dataset().Account\n,'/'\n,dataset().Container\n,'/'\n,dataset().Folder\n,'/'\n,dataset().FileName\n)",
+							"type": "Expression"
+						}
+					}
+				},
+				"schema": {}
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/linkedServices/Azure Function API')]"
+			]
+		},
+		{
+			"name": "[concat(parameters('workspaceName'), '/StackOverflow - 7zip2Parquet')]",
+			"type": "Microsoft.Synapse/workspaces/pipelines",
+			"apiVersion": "2019-06-01-preview",
+			"properties": {
+				"activities": [
+					{
+						"name": "ForEach - 7zip Files",
+						"type": "ForEach",
+						"dependsOn": [
+							{
+								"activity": "Filter - Specific File",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Filter - Specific File').output.Value",
+								"type": "Expression"
+							},
+							"activities": [
+								{
+									"name": "Copy - UnZip Files 2 Parquet",
+									"type": "Copy",
+									"dependsOn": [],
+									"policy": {
+										"timeout": "1.00:00:00",
+										"retry": 1,
+										"retryIntervalInSeconds": 120,
+										"secureOutput": false,
+										"secureInput": false
+									},
+									"userProperties": [
+										{
+											"name": "Source",
+											"value": "@{concat('/api/SevenZip/'\n,uriComponent(pipeline().parameters.Account)\n,'/'\n,uriComponent(pipeline().parameters.Container)\n,'/'\n,uriComponent(uriComponent(pipeline().parameters.Folder))\n,'/'\n,uriComponent(item().name)\n)}"
+										},
+										{
+											"name": "Destination",
+											"value": "lake/StackOverflow/parquet/@{uriComponent(replace(item().name,'.7z','.parquet'))}"
+										}
+									],
+									"typeProperties": {
+										"source": {
+											"type": "JsonSource",
+											"storeSettings": {
+												"type": "HttpReadSettings",
+												"requestMethod": "GET",
+												"requestTimeout": "01:00:00"
+											},
+											"formatSettings": {
+												"type": "JsonReadSettings"
+											}
+										},
+										"sink": {
+											"type": "ParquetSink",
+											"storeSettings": {
+												"type": "AzureBlobFSWriteSettings"
+											},
+											"formatSettings": {
+												"type": "ParquetWriteSettings"
+											}
+										},
+										"enableStaging": false
+									},
+									"inputs": [
+										{
+											"referenceName": "SevenZipAPI",
+											"type": "DatasetReference",
+											"parameters": {
+												"Account": {
+													"value": "@uriComponent(pipeline().parameters.Account)",
+													"type": "Expression"
+												},
+												"Container": {
+													"value": "@uriComponent(pipeline().parameters.Container)",
+													"type": "Expression"
+												},
+												"Folder": {
+													"value": "@uriComponent(uriComponent(pipeline().parameters.Folder))",
+													"type": "Expression"
+												},
+												"FileName": {
+													"value": "@uriComponent(item().name)",
+													"type": "Expression"
+												}
+											}
+										}
+									],
+									"outputs": [
+										{
+											"referenceName": "ParquetXMLStorage",
+											"type": "DatasetReference",
+											"parameters": {
+												"FileName": {
+													"value": "@uriComponent(replace(item().name,'.7z','.parquet'))",
+													"type": "Expression"
+												}
+											}
+										}
+									]
+								}
+							]
+						}
+					},
+					{
+						"name": "Get Metadata - List 7z",
+						"type": "GetMetadata",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "0.00:15:00",
+							"retry": 3,
+							"retryIntervalInSeconds": 90,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"dataset": {
+								"referenceName": "ZipXml",
+								"type": "DatasetReference",
+								"parameters": {
+									"container": {
+										"value": "@pipeline().parameters.Container",
+										"type": "Expression"
+									},
+									"folder": {
+										"value": "@pipeline().parameters.Folder",
+										"type": "Expression"
+									}
+								}
+							},
+							"fieldList": [
+								"childItems"
+							],
+							"storeSettings": {
+								"type": "AzureBlobFSReadSettings",
+								"recursive": true,
+								"enablePartitionDiscovery": false
+							},
+							"formatSettings": {
+								"type": "BinaryReadSettings"
+							}
+						}
+					},
+					{
+						"name": "Filter - Specific File",
+						"type": "Filter",
+						"dependsOn": [
+							{
+								"activity": "Get Metadata - List 7z",
+								"dependencyConditions": [
+									"Succeeded"
+								]
+							}
+						],
+						"userProperties": [],
+						"typeProperties": {
+							"items": {
+								"value": "@activity('Get Metadata - List 7z').output.childItems",
+								"type": "Expression"
+							},
+							"condition": {
+								"value": "@or(empty(pipeline().parameters.FileName)\n,equals(item().name,pipeline().parameters.FileName)\n)",
+								"type": "Expression"
+							}
+						}
+					}
+				],
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"Container": {
+						"type": "string",
+						"defaultValue": "lake"
+					},
+					"Folder": {
+						"type": "string",
+						"defaultValue": "StackOverflow/raw/History/7z/"
+					},
+					"Account": {
+						"type": "string",
+						"defaultValue": "synapselakeapp"
+					},
+					"FileName": {
+						"type": "string"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('workspaceId'), '/datasets/ZipXml')]",
+				"[concat(variables('workspaceId'), '/datasets/SevenZipAPI')]",
+				"[concat(variables('workspaceId'), '/datasets/ParquetXMLStorage')]"
+			]
 		}
 	]
 }
