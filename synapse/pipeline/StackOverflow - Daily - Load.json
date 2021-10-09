@@ -55,7 +55,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"UrlQuery": {
-								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\treplace(\n\t\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t\t,'{filter}'\n\t\t\t\t\t,pipeline().parameters.Filter\n\t\t\t\t)\n\t\t\t,'{key}'\n\t\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t\t)\n\t\t,'{access_token}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t\t)\n\t,'{date}'\n\t,activity('LKP - Last Date').output.firstRow.LastPostDate\n\t)\n,'{object}'\n,pipeline().parameters.Object\n)",
+								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\treplace(\n\t\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t\t,'{filter}'\n\t\t\t\t\t,pipeline().parameters.Filter\n\t\t\t\t)\n\t\t\t,'{key}'\n\t\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t\t)\n\t\t,'{access_token}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t\t)\n\t,'{date}'\n\t,activity('LKP - Last Date').output.firstRow.LastDate\n\t)\n,'{object}'\n,pipeline().parameters.Object\n)",
 								"type": "Expression"
 							}
 						}
