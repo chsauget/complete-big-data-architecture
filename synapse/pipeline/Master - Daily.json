@@ -5,7 +5,14 @@
 			{
 				"name": "EP - Badges",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -28,7 +35,14 @@
 			{
 				"name": "EP - Posts",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -51,7 +65,14 @@
 			{
 				"name": "EP - Comments",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -88,7 +109,7 @@
 							"type": "Expression"
 						},
 						"Filter": "!*MO(WDa3IX-qd)Aj",
-						"MaxDateQuery": "SELECT 0",
+						"MaxDateQuery": "SELECT [LastDate] = 0",
 						"Object": "tags",
 						"BackoffSeconds": "1000"
 					}
@@ -97,7 +118,14 @@
 			{
 				"name": "EP - Users",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
