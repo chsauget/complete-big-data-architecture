@@ -1,47 +1,72 @@
 {
-	"name": "Daily - Posts",
+	"name": "Daily - Tags",
 	"properties": {
 		"folder": {
 			"name": "StackOverflow"
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "spark",
+			"type": "BigDataPoolReference"
+		},
 		"sessionProperties": {
 			"driverMemory": "28g",
 			"driverCores": 4,
 			"executorMemory": "28g",
 			"executorCores": 4,
-			"numExecutors": 2,
+			"numExecutors": 7,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "2",
-				"spark.dynamicAllocation.maxExecutors": "2"
+				"spark.dynamicAllocation.minExecutors": "7",
+				"spark.dynamicAllocation.maxExecutors": "7"
 			}
 		},
 		"metadata": {
 			"saveOutput": true,
 			"enableDebugMode": false,
 			"kernelspec": {
-				"name": "synapse_sparksql",
-				"display_name": "sql"
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
 			},
 			"language_info": {
-				"name": "sql"
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
+				"name": "spark",
+				"type": "Spark",
+				"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 8,
+				"memory": 56,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
 		"cells": [
 			{
 				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
 				"source": [
+					"%%pyspark\r\n",
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *\r\n",
 					"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
-					"rawpath = \"raw/Daily/Posts/*/*.json\"\r\n",
+					"rawpath = \"raw/Daily/tags/*/*.json\"\r\n",
 					"golpath = \"gold/\"\r\n",
 					""
 				],
-				"execution_count": null
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
@@ -54,12 +79,18 @@
 						"transient": {
 							"deleting": false
 						}
-					}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": false
 				},
 				"source": [
-					"df_json = spark.read.json(rawpath)"
+					"%%pyspark\n",
+					"df_json = spark.read.json(lakepath+rawpath)\n",
+					"display(df_json.limit(10))"
 				],
-				"execution_count": null
+				"execution_count": 7
 			}
 		]
 	}
