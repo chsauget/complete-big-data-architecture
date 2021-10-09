@@ -31,7 +31,10 @@
 					"source": {
 						"type": "RestSource",
 						"httpRequestTimeout": "00:10:00",
-						"requestInterval": "00.00:00:00.100",
+						"requestInterval": {
+							"value": "@{pipeline().parameters.BackoffSeconds}*1000",
+							"type": "Expression"
+						},
 						"requestMethod": "GET",
 						"paginationRules": {
 							"QueryParameters['urlquery']": "$.nextLink"
@@ -143,6 +146,9 @@
 			},
 			"Object": {
 				"type": "string"
+			},
+			"BackoffSeconds": {
+				"type": "int"
 			}
 		},
 		"folder": {
