@@ -77,9 +77,30 @@
 					"\r\n",
 					"documentAssembler = DocumentAssembler() \\\r\n",
 					"    .setInputCol('Body') \\\r\n",
-					"    .setOutputCol('BodyClean')"
+					"    .setOutputCol('BodyClean')\r\n",
+					"\r\n",
+					"cleanUpPatterns = [\"<[^>]*>\"]\r\n",
+					"\r\n",
+					"documentNormalizer = DocumentNormalizer() \\\r\n",
+					"    .setInputCols(\"BodyClean\") \\\r\n",
+					"    .setOutputCol(\"normalizedBody\") \\\r\n",
+					"    .setAction(\"clean\") \\\r\n",
+					"    .setPatterns(cleanUpPatterns) \\\r\n",
+					"    .setReplacement(\" \") \\\r\n",
+					"    .setPolicy(\"pretty_all\") \\\r\n",
+					"    .setLowercase(True)\r\n",
+					"docPatternRemoverPipeline = \\\r\n",
+					"  Pipeline() \\\r\n",
+					"    .setStages([\r\n",
+					"        documentAssembler,\r\n",
+					"        documentNormalizer\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"ds = docPatternRemoverPipeline.fit(df).transform(df)\r\n",
+					"\r\n",
+					"ds.show()"
 				],
-				"execution_count": 2
+				"execution_count": 7
 			}
 		]
 	}
