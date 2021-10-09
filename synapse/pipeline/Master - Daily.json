@@ -77,6 +77,29 @@
 						"BackoffSeconds": "5000"
 					}
 				}
+			},
+			{
+				"name": "EP - Tags",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!*MO(WDa3IX-qd)Aj",
+						"MaxDateQuery": "SELECT 0",
+						"Object": "tags",
+						"BackoffSeconds": "1000"
+					}
+				}
 			}
 		],
 		"parameters": {
