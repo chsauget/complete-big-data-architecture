@@ -109,7 +109,7 @@
 							"type": "Expression"
 						},
 						"Filter": "!*MO(WDa3IX-qd)Aj",
-						"MaxDateQuery": "SELECT [LastDate] = 0",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(0 AS VARCHAR(20))",
 						"Object": "tags",
 						"BackoffSeconds": "1000"
 					}
