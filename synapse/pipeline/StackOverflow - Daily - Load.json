@@ -1,9 +1,9 @@
 {
-	"name": "StackOverflow - Daily - Posts",
+	"name": "StackOverflow - Daily - Load",
 	"properties": {
 		"activities": [
 			{
-				"name": "Copy - Posts",
+				"name": "Copy - StackOverflow",
 				"type": "Copy",
 				"dependsOn": [
 					{
@@ -13,7 +13,7 @@
 						]
 					},
 					{
-						"activity": "LKP - Last Post Date",
+						"activity": "LKP - Last Date",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -30,8 +30,11 @@
 				"typeProperties": {
 					"source": {
 						"type": "RestSource",
-						"httpRequestTimeout": "00:01:40",
-						"requestInterval": "00.00:00:00.010",
+						"httpRequestTimeout": "12:00:00",
+						"requestInterval": {
+							"value": "@{pipeline().parameters.BackoffSeconds}",
+							"type": "Expression"
+						},
 						"requestMethod": "GET",
 						"paginationRules": {
 							"QueryParameters['urlquery']": "$.nextLink"
@@ -55,7 +58,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"UrlQuery": {
-								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t,'{filter}'\n\t\t\t\t,pipeline().parameters.Filter\n\t\t\t)\n\t\t,'{key}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t)\n\t,'{access_token}'\n\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t)\n,'{date}'\n,activity('LKP - Last Post Date').output.firstRow.LastPostDate\n)",
+								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\treplace(\n\t\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t\t,'{filter}'\n\t\t\t\t\t,pipeline().parameters.Filter\n\t\t\t\t)\n\t\t\t,'{key}'\n\t\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t\t)\n\t\t,'{access_token}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t\t)\n\t,'{date}'\n\t,activity('LKP - Last Date').output.firstRow.LastDate\n\t)\n,'{object}'\n,pipeline().parameters.Object\n)",
 								"type": "Expression"
 							}
 						}
@@ -67,7 +70,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"FileName": {
-								"value": "Posts/@{formatDateTime(utcnow(),'yyyyMMdd')}/@{formatDateTime(utcnow(),'hh-mm')}.json",
+								"value": "@{pipeline().parameters.Object}/@{formatDateTime(utcnow(),'yyyyMMdd')}/@{formatDateTime(utcnow(),'hh-mm')}.json",
 								"type": "Expression"
 							}
 						}
@@ -79,8 +82,8 @@
 				"type": "WebActivity",
 				"dependsOn": [],
 				"policy": {
-					"timeout": "7.00:00:00",
-					"retry": 0,
+					"timeout": "0.00:01:00",
+					"retry": 3,
 					"retryIntervalInSeconds": 30,
 					"secureOutput": false,
 					"secureInput": false
@@ -100,7 +103,7 @@
 				}
 			},
 			{
-				"name": "LKP - Last Post Date",
+				"name": "LKP - Last Date",
 				"type": "Lookup",
 				"dependsOn": [],
 				"policy": {
@@ -114,7 +117,10 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlDWSource",
-						"sqlReaderQuery": "SELECT [LastPostDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
+						"sqlReaderQuery": {
+							"value": "@pipeline().parameters.MaxDateQuery",
+							"type": "Expression"
+						},
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
@@ -133,11 +139,16 @@
 			"Filter": {
 				"type": "string",
 				"defaultValue": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ"
-			}
-		},
-		"variables": {
-			"test": {
-				"type": "String"
+			},
+			"MaxDateQuery": {
+				"type": "string",
+				"defaultValue": "SELECT [LastPostDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)   FROM [dwh].[Posts]"
+			},
+			"Object": {
+				"type": "string"
+			},
+			"BackoffSeconds": {
+				"type": "string"
 			}
 		},
 		"folder": {

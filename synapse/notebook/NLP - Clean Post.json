@@ -1,0 +1,137 @@
+{
+	"name": "NLP - Clean Post",
+	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "spark3scala112",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "56g",
+			"driverCores": 8,
+			"executorMemory": "56g",
+			"executorCores": 8,
+			"numExecutors": 4,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "4",
+				"spark.dynamicAllocation.maxExecutors": "4",
+				"spark.synapse.library.python.env": "name: nlp\r\nchannels:\r\n- defaults\r\ndependencies:\r\n- pip:\r\n  - spark-nlp",
+				"spark.synapse.library.python.env.name": "requirements.yml"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark3scala112",
+				"name": "spark3scala112",
+				"type": "Spark",
+				"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark3scala112",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "3.1",
+				"nodeCount": 10,
+				"cores": 8,
+				"memory": 56,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"source": [
+					"import sparknlp\r\n",
+					"\r\n",
+					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
+					"df.show(10)"
+				],
+				"execution_count": 11
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from sparknlp.base import *\r\n",
+					"from sparknlp.annotator import *\r\n",
+					"from pyspark.ml import Pipeline\r\n",
+					"\r\n",
+					"\r\n",
+					"\r\n",
+					"documentAssembler = DocumentAssembler() \\\r\n",
+					"    .setInputCol('Body') \\\r\n",
+					"    .setOutputCol('BodyClean')\r\n",
+					"\r\n",
+					"cleanUpPatterns = [\"<[^>]*>\"]\r\n",
+					"\r\n",
+					"documentNormalizer = DocumentNormalizer() \\\r\n",
+					"    .setInputCols(\"BodyClean\") \\\r\n",
+					"    .setOutputCol(\"normalizedBody\") \\\r\n",
+					"    .setAction(\"clean\") \\\r\n",
+					"    .setPatterns(cleanUpPatterns) \\\r\n",
+					"    .setReplacement(\" \") \\\r\n",
+					"    .setPolicy(\"pretty_all\") \\\r\n",
+					"    .setLowercase(True)\r\n",
+					"\r\n",
+					"\r\n",
+					"docPatternRemoverPipeline = \\\r\n",
+					"  Pipeline() \\\r\n",
+					"    .setStages([\r\n",
+					"        documentAssembler,\r\n",
+					"        documentNormalizer\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"ds = docPatternRemoverPipeline.fit(df).transform(df)\r\n",
+					"\r\n",
+					"ds.show()"
+				],
+				"execution_count": 2
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from sparknlp.pretrained import PretrainedPipeline\r\n",
+					"\r\n",
+					"pipeline = PretrainedPipeline('analyze_sentiment_ml','en')\r\n",
+					""
+				],
+				"execution_count": 3
+			}
+		]
+	}
+}

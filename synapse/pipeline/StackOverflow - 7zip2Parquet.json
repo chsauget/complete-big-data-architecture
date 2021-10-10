@@ -25,7 +25,7 @@
 							"type": "Copy",
 							"dependsOn": [],
 							"policy": {
-								"timeout": "0.12:00:00",
+								"timeout": "1.00:00:00",
 								"retry": 1,
 								"retryIntervalInSeconds": 120,
 								"secureOutput": false,
@@ -46,7 +46,8 @@
 									"type": "JsonSource",
 									"storeSettings": {
 										"type": "HttpReadSettings",
-										"requestMethod": "GET"
+										"requestMethod": "GET",
+										"requestTimeout": "23:00:00"
 									},
 									"formatSettings": {
 										"type": "JsonReadSettings"
@@ -65,7 +66,7 @@
 							},
 							"inputs": [
 								{
-									"referenceName": "Json1",
+									"referenceName": "SevenZipAPI",
 									"type": "DatasetReference",
 									"parameters": {
 										"Account": {
@@ -183,6 +184,9 @@
 			"FileName": {
 				"type": "string"
 			}
+		},
+		"folder": {
+			"name": "Historical"
 		},
 		"annotations": []
 	}

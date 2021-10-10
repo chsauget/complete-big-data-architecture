@@ -44,7 +44,8 @@
 				"sparkVersion": "2.4",
 				"nodeCount": 3,
 				"cores": 8,
-				"memory": 56
+				"memory": 56,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -58,7 +59,7 @@
 					"goldpath = \"gold/\"\r\n",
 					"historypath = \"raw/History/Parquet/\""
 				],
-				"execution_count": 42
+				"execution_count": 37
 			},
 			{
 				"cell_type": "markdown",
@@ -95,7 +96,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 2
+				"execution_count": 38
 			},
 			{
 				"cell_type": "markdown",
@@ -124,9 +125,9 @@
 					}
 				},
 				"source": [
-					"spark.sql(\"DROP TABLE SparkDwh.Votes\")"
+					"spark.sql(\"DROP TABLE SparkDwh.Posts\")"
 				],
-				"execution_count": 88
+				"execution_count": 39
 			},
 			{
 				"cell_type": "code",
@@ -159,7 +160,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 77
+				"execution_count": 40
 			},
 			{
 				"cell_type": "markdown",
@@ -205,7 +206,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 79
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -251,7 +252,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 81
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -297,7 +298,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 83
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -346,13 +347,13 @@
 					"                .withColumn(\"CreationDateTime\", df[\"CreationDate\"].cast(TimestampType()))\\\r\n",
 					"                .withColumn(\"PartitionDate\", date_format(df[\"CreationDate\"],\"yyyy-MM-dd\"))\r\n",
 					"\r\n",
-					"df_withDate.drop(\"CreationDate\")\r\n",
+					"df_withDate = df_withDate.drop(\"CreationDate\")\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"df_withDate.write.format(\"delta\").option(\"mergeSchema\", \"true\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 85
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -401,7 +402,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 87
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -446,7 +447,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 89
+				"execution_count": null
 			}
 		]
 	}

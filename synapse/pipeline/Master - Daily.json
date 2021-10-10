@@ -1,0 +1,160 @@
+{
+	"name": "Master - Daily",
+	"properties": {
+		"activities": [
+			{
+				"name": "EP - Badges",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!3tlXYBI.hSlGyD3oc",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([DateTime])) AS VARCHAR)\n  FROM [dwh].[Badges]",
+						"Object": "badges/recipients",
+						"BackoffSeconds": "5000"
+					}
+				}
+			},
+			{
+				"name": "EP - Posts",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ",
+						"MaxDateQuery": "  SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
+						"Object": "posts",
+						"BackoffSeconds": "10500"
+					}
+				}
+			},
+			{
+				"name": "EP - Comments",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!Fc6b9.M25voXPC5GTjBjeyMd)l",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Comments]",
+						"Object": "comments",
+						"BackoffSeconds": "5000"
+					}
+				}
+			},
+			{
+				"name": "EP - Tags",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!*MO(WDa3IX-qd)Aj",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(0 AS VARCHAR(20))",
+						"Object": "tags",
+						"BackoffSeconds": "1000"
+					}
+				}
+			},
+			{
+				"name": "EP - Users",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - Daily - Load",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"UrlQuery": {
+							"value": "@pipeline().parameters.BaseUrl",
+							"type": "Expression"
+						},
+						"Filter": "!4-M_0EdrCcvZ7suG-",
+						"MaxDateQuery": "SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX(LastAccessDate)) AS VARCHAR)\n  FROM [dwh].[Users]",
+						"Object": "users",
+						"BackoffSeconds": "10000"
+					}
+				}
+			}
+		],
+		"parameters": {
+			"BaseUrl": {
+				"type": "string",
+				"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+			}
+		},
+		"folder": {
+			"name": "Daily"
+		},
+		"annotations": []
+	}
+}
