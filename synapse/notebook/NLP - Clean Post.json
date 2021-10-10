@@ -1,6 +1,9 @@
 {
 	"name": "NLP - Clean Post",
 	"properties": {
+		"folder": {
+			"name": "NLP"
+		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
