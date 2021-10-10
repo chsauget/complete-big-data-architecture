@@ -132,6 +132,7 @@
 					],
 					"storeSettings": {
 						"type": "AzureBlobFSReadSettings",
+						"recursive": true,
 						"enablePartitionDiscovery": false
 					},
 					"formatSettings": {
@@ -153,6 +154,9 @@
 				"type": "string",
 				"defaultValue": "synapselakeapp"
 			}
+		},
+		"folder": {
+			"name": "Archive"
 		},
 		"annotations": []
 	}

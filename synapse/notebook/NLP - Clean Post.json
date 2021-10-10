@@ -57,7 +57,7 @@
 					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
 					"df.show(10)"
 				],
-				"execution_count": 9
+				"execution_count": 11
 			},
 			{
 				"cell_type": "code",
@@ -106,7 +106,7 @@
 					"\r\n",
 					"ds.show()"
 				],
-				"execution_count": 6
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -127,7 +127,7 @@
 					"pipeline = PretrainedPipeline('analyze_sentiment_ml','en')\r\n",
 					""
 				],
-				"execution_count": 7
+				"execution_count": 3
 			}
 		]
 	}
