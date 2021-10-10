@@ -47,7 +47,7 @@
 									"storeSettings": {
 										"type": "HttpReadSettings",
 										"requestMethod": "GET",
-										"requestTimeout": "01:00:00"
+										"requestTimeout": "23:00:00"
 									},
 									"formatSettings": {
 										"type": "JsonReadSettings"
