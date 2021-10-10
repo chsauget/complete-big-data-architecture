@@ -1,0 +1,56 @@
+{
+	"name": "Master - Load Historical 7z",
+	"properties": {
+		"activities": [
+			{
+				"name": "EP - 7Z to Parquet",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "StackOverflow - 7zip2Parquet",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true,
+					"parameters": {
+						"Container": "lake",
+						"Folder": "StackOverflow/raw/History/7z/",
+						"Account": "synapselakeapp"
+					}
+				}
+			},
+			{
+				"name": "NTBK - Reload Tables",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "EP - 7Z to Parquet",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Init from History",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
+				}
+			}
+		],
+		"folder": {
+			"name": "Historical"
+		},
+		"annotations": []
+	}
+}

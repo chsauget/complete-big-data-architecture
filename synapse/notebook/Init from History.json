@@ -59,7 +59,7 @@
 					"goldpath = \"gold/\"\r\n",
 					"historypath = \"raw/History/Parquet/\""
 				],
-				"execution_count": 4
+				"execution_count": 37
 			},
 			{
 				"cell_type": "markdown",
@@ -96,7 +96,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 2
+				"execution_count": 38
 			},
 			{
 				"cell_type": "markdown",
@@ -127,7 +127,7 @@
 				"source": [
 					"spark.sql(\"DROP TABLE SparkDwh.Posts\")"
 				],
-				"execution_count": 28
+				"execution_count": 39
 			},
 			{
 				"cell_type": "code",
@@ -160,7 +160,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 77
+				"execution_count": 40
 			},
 			{
 				"cell_type": "markdown",
@@ -206,7 +206,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 79
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -252,7 +252,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 81
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -298,7 +298,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 83
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -312,25 +312,6 @@
 				"source": [
 					"**Posts**"
 				]
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"df_cleaned.select()\r\n",
-					""
-				],
-				"execution_count": 23
 			},
 			{
 				"cell_type": "code",
@@ -372,7 +353,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 36
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -421,7 +402,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 87
+				"execution_count": null
 			},
 			{
 				"cell_type": "markdown",
@@ -466,7 +447,7 @@
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 89
+				"execution_count": null
 			}
 		]
 	}
