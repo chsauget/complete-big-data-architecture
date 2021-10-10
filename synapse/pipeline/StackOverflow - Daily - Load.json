@@ -30,7 +30,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "RestSource",
-						"httpRequestTimeout": "00:10:00",
+						"httpRequestTimeout": "12:00:00",
 						"requestInterval": {
 							"value": "@{pipeline().parameters.BackoffSeconds}",
 							"type": "Expression"
