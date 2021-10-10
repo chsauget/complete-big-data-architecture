@@ -26,7 +26,7 @@ namespace Company.Function
                     .WaitAndRetryAsync(MAX_RETRIES, 
                         retryAttempt =>
                           {
-                              double waitTimeInSeconds = 0 + Math.Pow(2, retryAttempt);
+                              double waitTimeInSeconds = 16 + Math.Pow(2, retryAttempt);
                               log.LogWarning($"Call {retryAttempt}/{MAX_RETRIES} failed ! Trying again in {waitTimeInSeconds} seconds");
                               return TimeSpan.FromSeconds(waitTimeInSeconds);
                           },
@@ -87,6 +87,7 @@ namespace Company.Function
         public class StackOverflowDTO
         {
             public string nextLink {get;set;}
+            public int backoff {get;set;}
             public bool has_more {get;set;}
             public int quota_max {get;set;}
             public int quota_remaining {get;set;}
