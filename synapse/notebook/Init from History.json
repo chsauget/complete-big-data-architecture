@@ -44,7 +44,8 @@
 				"sparkVersion": "2.4",
 				"nodeCount": 3,
 				"cores": 8,
-				"memory": 56
+				"memory": 56,
+				"automaticScaleJobs": false
 			},
 			"sessionKeepAliveTimeout": 30
 		},
@@ -326,6 +327,11 @@
 					}
 				},
 				"source": [
+					"import sparknlp\r\n",
+					"from sparknlp.base import *\r\n",
+					"from sparknlp.annotator import *\r\n",
+					"from pyspark.ml import Pipeline\r\n",
+					"\r\n",
 					"tableName = 'Posts'\r\n",
 					"\r\n",
 					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\r\n",
@@ -348,11 +354,39 @@
 					"\r\n",
 					"df_withDate.drop(\"CreationDate\")\r\n",
 					"\r\n",
-					"df_withDate.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"#Cleaning step for body\r\n",
+					"documentAssembler = DocumentAssembler() \\\r\n",
+					"    .setInputCol('Body') \\\r\n",
+					"    .setOutputCol('BodyClean')\r\n",
+					"\r\n",
+					"cleanUpPatterns = [\"<[^>]*>\"]\r\n",
+					"\r\n",
+					"documentNormalizer = DocumentNormalizer() \\\r\n",
+					"    .setInputCols(\"BodyClean\") \\\r\n",
+					"    .setOutputCol(\"normalizedBody\") \\\r\n",
+					"    .setAction(\"clean\") \\\r\n",
+					"    .setPatterns(cleanUpPatterns) \\\r\n",
+					"    .setReplacement(\" \") \\\r\n",
+					"    .setPolicy(\"pretty_all\") \\\r\n",
+					"    .setLowercase(True)\r\n",
+					"\r\n",
+					"\r\n",
+					"docPatternRemoverPipeline = \\\r\n",
+					"  Pipeline() \\\r\n",
+					"    .setStages([\r\n",
+					"        documentAssembler,\r\n",
+					"        documentNormalizer\r\n",
+					"    ])\r\n",
+					"\r\n",
+					"df_cleaned = docPatternRemoverPipeline.fit(df_withDate).transform(df_withDate)\r\n",
+					"\r\n",
+					"df_cleaned.drop(\"BodyClean\")\r\n",
+					"\r\n",
+					"df_cleaned.write.format(\"delta\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 85
+				"execution_count": 1
 			},
 			{
 				"cell_type": "markdown",
