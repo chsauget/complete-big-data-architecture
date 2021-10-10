@@ -368,12 +368,11 @@
 					"\r\n",
 					"df_withDate = df_withDate.drop(\"CreationDate\")\r\n",
 					"\r\n",
-					"\r\n",
-					"df_cleaned.write.format(\"delta\").option(\"mergeSchema\", \"true\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
+					"df_withDate.write.format(\"delta\").option(\"mergeSchema\", \"true\").partitionBy(\"PartitionDate\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\r\n",
 					"\r\n",
 					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
 				],
-				"execution_count": 34
+				"execution_count": 36
 			},
 			{
 				"cell_type": "markdown",
