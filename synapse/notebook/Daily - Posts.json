@@ -186,6 +186,24 @@
 					"deltaTable.delete(\"PartitionDate IS NULL\") "
 				],
 				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"deltaTable.delete(\"CreationDateTime > '2021-09-05 06:23:00'\") "
+				],
+				"execution_count": 38
 			}
 		]
 	}
