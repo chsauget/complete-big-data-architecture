@@ -7,7 +7,7 @@
 		"nbformat": 4,
 		"nbformat_minor": 2,
 		"bigDataPool": {
-			"referenceName": "spark3scala112",
+			"referenceName": "spark",
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
@@ -15,13 +15,11 @@
 			"driverCores": 8,
 			"executorMemory": "56g",
 			"executorCores": 8,
-			"numExecutors": 4,
+			"numExecutors": 1,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "4",
-				"spark.dynamicAllocation.maxExecutors": "4",
-				"spark.synapse.library.python.env": "name: nlp\r\nchannels:\r\n- defaults\r\ndependencies:\r\n- pip:\r\n  - spark-nlp",
-				"spark.synapse.library.python.env.name": "requirements.yml"
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "1"
 			}
 		},
 		"metadata": {
@@ -35,16 +33,16 @@
 				"name": "python"
 			},
 			"a365ComputeOptions": {
-				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark3scala112",
-				"name": "spark3scala112",
+				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
+				"name": "spark",
 				"type": "Spark",
-				"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark3scala112",
+				"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark",
 				"auth": {
 					"type": "AAD",
 					"authResource": "https://dev.azuresynapse.net"
 				},
-				"sparkVersion": "3.1",
-				"nodeCount": 10,
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
 				"cores": 8,
 				"memory": 56,
 				"automaticScaleJobs": false
@@ -60,7 +58,7 @@
 					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
 					"df.show(10)"
 				],
-				"execution_count": 11
+				"execution_count": 7
 			},
 			{
 				"cell_type": "code",
@@ -79,7 +77,7 @@
 					"from sparknlp.base import *\r\n",
 					"from sparknlp.annotator import *\r\n",
 					"from pyspark.ml import Pipeline\r\n",
-					"\r\n",
+					"from sparknlp.pretrained import PretrainedPipeline\r\n",
 					"\r\n",
 					"\r\n",
 					"documentAssembler = DocumentAssembler() \\\r\n",
@@ -97,19 +95,28 @@
 					"    .setPolicy(\"pretty_all\") \\\r\n",
 					"    .setLowercase(True)\r\n",
 					"\r\n",
+					"useEmbeddings = UniversalSentenceEncoder.pretrained() \\\r\n",
+					"    .setInputCols([\"normalizedBody\"]) \\\r\n",
+					"    .setOutputCol(\"sentence_embeddings\")\r\n",
+					"sentiment = SentimentDLModel.pretrained(\"sentimentdl_use_twitter\") \\\r\n",
+					"    .setInputCols([\"sentence_embeddings\"]) \\\r\n",
+					"    .setThreshold(0.7) \\\r\n",
+					"    .setOutputCol(\"sentiment\")\r\n",
 					"\r\n",
 					"docPatternRemoverPipeline = \\\r\n",
 					"  Pipeline() \\\r\n",
 					"    .setStages([\r\n",
 					"        documentAssembler,\r\n",
-					"        documentNormalizer\r\n",
+					"        documentNormalizer,\r\n",
+					"        useEmbeddings,\r\n",
+					"        sentiment\r\n",
 					"    ])\r\n",
 					"\r\n",
 					"ds = docPatternRemoverPipeline.fit(df).transform(df)\r\n",
 					"\r\n",
 					"ds.show()"
 				],
-				"execution_count": 2
+				"execution_count": 12
 			},
 			{
 				"cell_type": "code",
@@ -130,7 +137,7 @@
 					"pipeline = PretrainedPipeline('analyze_sentiment_ml','en')\r\n",
 					""
 				],
-				"execution_count": 3
+				"execution_count": 9
 			}
 		]
 	}
