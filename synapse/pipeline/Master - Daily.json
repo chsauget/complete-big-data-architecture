@@ -5,14 +5,7 @@
 			{
 				"name": "EP - Badges",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Comments",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -58,14 +51,7 @@
 			{
 				"name": "EP - Comments",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Posts",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -88,14 +74,7 @@
 			{
 				"name": "EP - Tags",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Users",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -118,14 +97,7 @@
 			{
 				"name": "EP - Users",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Badges",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
