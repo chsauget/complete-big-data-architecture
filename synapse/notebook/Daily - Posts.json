@@ -107,10 +107,24 @@
 					"collapsed": false
 				},
 				"source": [
-					"df_flat = df_json.select(explode_outer(\"items\")).select(\"col.body\", \"col.last_activity_date\", \"col.down_vote_count\", \"col.post_id\", \"col.post_type\", \"col.up_vote_count\", \"col.score\", \"col.title\").distinct() #duplicates in dataset\n",
+					"df_flat = df_json.select(explode_outer(\"items\")) \\\n",
+					"    .select(\"col.body\", \n",
+					"        \"col.last_activity_date\",\n",
+					"        \"col.up_vote_count\",\n",
+					"        \"col.post_id\",\n",
+					"        \"col.score\",\n",
+					"        \"col.title\",\n",
+					"        \"col.creation_date\"\n",
+					"    )  #duplicates in dataset\n",
+					"\n",
+					"df_flat = df_flat.withColumn(\"_CreationDateTime\", df_flat[\"creation_date\"].cast(TimestampType())) \\\n",
+					"    .withColumn(\"_LastActivityDate\", date_format(df_flat[\"last_activity_date\"].cast(TimestampType()),\"yyyy-MM-dd\")) \\\n",
+					"    .withColumn(\"_PartitionDate\", date_format(df_flat[\"creation_date\"].cast(TimestampType()),\"yyyy-MM-dd\")) \\\n",
+					"    .distinct()\n",
+					"\n",
 					"display(df_flat.limit(3))"
 				],
-				"execution_count": 11
+				"execution_count": 36
 			},
 			{
 				"cell_type": "code",
@@ -136,22 +150,42 @@
 					"  .whenMatchedUpdate(set = \n",
 					"    { \n",
 					"      \"Body\" : \"updates.body\",\n",
-					"      \"LastActivityDate\" : \"updates.last_activity_date\",\n",
 					"      \"FavoriteCount\" : \"updates.up_vote_count\",\n",
-					"      \"Score\" : \"updates.score\"\n",
+					"      \"Score\" : \"updates.score\",\n",
+					"      \"LastActivityDate\" : \"updates._LastActivityDate\"\n",
 					"    } \n",
 					"  ) \\\n",
 					"  .whenNotMatchedInsert(values =\n",
 					"    {\n",
 					"      \"Body\" : \"updates.body\",\n",
-					"      \"LastActivityDate\" : \"updates.last_activity_date\",\n",
 					"      \"FavoriteCount\" : \"updates.up_vote_count\",\n",
-					"      \"Score\" : \"updates.score\"\n",
+					"      \"Score\" : \"updates.score\",\n",
+					"      \"CreationDateTime\": \"updates._CreationDateTime\",\n",
+					"      \"LastActivityDate\" : \"updates._LastActivityDate\",\n",
+					"      \"PartitionDate\": \"updates._PartitionDate\"\n",
 					"    }\n",
 					"  ) \\\n",
 					"  .execute()"
 				],
-				"execution_count": 12
+				"execution_count": 37
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"deltaTable.delete(\"PartitionDate IS NULL\") "
+				],
+				"execution_count": null
 			}
 		]
 	}
