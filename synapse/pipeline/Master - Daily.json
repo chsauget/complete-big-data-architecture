@@ -60,7 +60,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "EP - Tags",
+						"activity": "EP - Posts",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -90,7 +90,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "EP - Posts",
+						"activity": "EP - Users",
 						"dependencyConditions": [
 							"Succeeded"
 						]
