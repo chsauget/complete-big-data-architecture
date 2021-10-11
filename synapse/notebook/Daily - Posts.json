@@ -1,0 +1,158 @@
+{
+	"name": "Daily - Posts",
+	"properties": {
+		"folder": {
+			"name": "StackOverflow"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "spark",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 7,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "7",
+				"spark.dynamicAllocation.maxExecutors": "7"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
+				"name": "spark",
+				"type": "Spark",
+				"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 8,
+				"memory": 56,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "python"
+					}
+				},
+				"source": [
+					"%%pyspark\r\n",
+					"from pyspark.sql.functions import *\r\n",
+					"from pyspark.sql.types import *\r\n",
+					"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
+					"rawpath = \"raw/Daily/posts/*/*.json\"\r\n",
+					"goldpath = \"gold/\"\r\n",
+					"tableName = \"Posts\""
+				],
+				"execution_count": 9
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"microsoft": {
+						"language": "python"
+					},
+					"collapsed": false
+				},
+				"source": [
+					"%%pyspark\n",
+					"df_json = spark.read.json(lakepath+rawpath)\n",
+					"display(df_json.limit(3))"
+				],
+				"execution_count": 10
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					},
+					"collapsed": false
+				},
+				"source": [
+					"df_flat = df_json.select(explode_outer(\"items\")).select(\"col.body\", \"col.last_activity_date\", \"col.down_vote_count\", \"col.post_id\", \"col.post_type\", \"col.up_vote_count\", \"col.score\", \"col.title\").distinct() #duplicates in dataset\n",
+					"display(df_flat.limit(3))"
+				],
+				"execution_count": 11
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"from delta.tables import *\n",
+					"\n",
+					"deltaTable = DeltaTable.forPath(spark, lakepath+goldpath+tableName)\n",
+					"\n",
+					"deltaTable.alias(tableName).merge(\n",
+					"    df_flat.alias(\"updates\"),\n",
+					"    tableName+\".Id = updates.post_id\") \\\n",
+					"  .whenMatchedUpdate(set = \n",
+					"    { \n",
+					"      \"Body\" : \"updates.body\",\n",
+					"      \"LastActivityDate\" : \"updates.last_activity_date\",\n",
+					"      \"FavoriteCount\" : \"updates.up_vote_count\",\n",
+					"      \"Score\" : \"updates.score\"\n",
+					"    } \n",
+					"  ) \\\n",
+					"  .whenNotMatchedInsert(values =\n",
+					"    {\n",
+					"      \"Body\" : \"updates.body\",\n",
+					"      \"LastActivityDate\" : \"updates.last_activity_date\",\n",
+					"      \"FavoriteCount\" : \"updates.up_vote_count\",\n",
+					"      \"Score\" : \"updates.score\"\n",
+					"    }\n",
+					"  ) \\\n",
+					"  .execute()"
+				],
+				"execution_count": 12
+			}
+		]
+	}
+}
