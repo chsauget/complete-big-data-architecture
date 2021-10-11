@@ -58,7 +58,7 @@
 					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
 					"df.show(10)"
 				],
-				"execution_count": 7
+				"execution_count": 18
 			},
 			{
 				"cell_type": "code",
@@ -116,7 +116,7 @@
 					"\r\n",
 					"ds.show()"
 				],
-				"execution_count": 12
+				"execution_count": 19
 			},
 			{
 				"cell_type": "code",
