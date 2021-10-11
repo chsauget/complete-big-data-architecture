@@ -63,7 +63,8 @@
 					"from pyspark.sql.types import *\r\n",
 					"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
 					"rawpath = \"raw/Daily/tags/*/*.json\"\r\n",
-					"goldpath = \"gold/\""
+					"goldpath = \"gold/\"\r\n",
+					"tableName = \"Tags\""
 				],
 				"execution_count": 56
 			},
@@ -175,7 +176,7 @@
 				"source": [
 					"from delta.tables import *\n",
 					"\n",
-					"deltaTable = DeltaTable.forPath(spark, lakepath+goldpath+\"Tags\")\n",
+					"deltaTable = DeltaTable.forPath(spark, lakepath+goldpath+tableName)\n",
 					"\n",
 					"deltaTable.alias(\"tags\").merge(\n",
 					"    df_flat.alias(\"updates\"),\n",
