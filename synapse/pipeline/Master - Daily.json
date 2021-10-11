@@ -7,7 +7,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "EP - Tags",
+						"activity": "EP - Comments",
 						"dependencyConditions": [
 							"Succeeded"
 						]
@@ -35,14 +35,7 @@
 			{
 				"name": "EP - Posts",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Tags",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -95,7 +88,14 @@
 			{
 				"name": "EP - Tags",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Posts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -120,7 +120,7 @@
 				"type": "ExecutePipeline",
 				"dependsOn": [
 					{
-						"activity": "EP - Tags",
+						"activity": "EP - Badges",
 						"dependencyConditions": [
 							"Succeeded"
 						]
