@@ -58,7 +58,7 @@
 						"type": "DatasetReference",
 						"parameters": {
 							"UrlQuery": {
-								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\treplace(\n\t\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t\t,'{filter}'\n\t\t\t\t\t,pipeline().parameters.Filter\n\t\t\t\t)\n\t\t\t,'{key}'\n\t\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t\t)\n\t\t,'{access_token}'\n\t\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t\t)\n\t,'{date}'\n\t,activity('LKP - Last Date').output.firstRow.LastDate\n\t)\n,'{object}'\n,pipeline().parameters.Object\n)",
+								"value": "@replace(\n\treplace(\n\t\treplace(\n\t\t\treplace(\n\t\t\t\treplace(\n\t\t\t\t\treplace(\n\t\t\t\t\t\tpipeline().parameters.UrlQuery\n\t\t\t\t\t\t,'{filter}'\n\t\t\t\t\t\t,pipeline().parameters.Filter\n\t\t\t\t\t)\n\t\t\t\t,'{key}'\n\t\t\t\t,json(activity('Web - KeyVault Secret').output.value).key\n\t\t\t\t)\n\t\t\t,'{access_token}'\n\t\t\t,json(activity('Web - KeyVault Secret').output.value).access_token\n\t\t\t)\n\t\t,'{date}'\n\t\t,activity('LKP - Last Date').output.firstRow.LastDate\n\t\t)\n\t,'{object}'\n\t,pipeline().parameters.Object\n\t)\n,'{additionalOption}'\n,pipeline().parameters.AdditionalOption\n)",
 								"type": "Expression"
 							},
 							"PageMax": {
@@ -138,7 +138,7 @@
 		"parameters": {
 			"UrlQuery": {
 				"type": "string",
-				"defaultValue": "https://api.stackexchange.com/2.3/posts?order=desc&sort=activity&site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+				"defaultValue": "https://api.stackexchange.com/2.3/posts?order=desc&sort=activity&site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}{additionalOption}"
 			},
 			"Filter": {
 				"type": "string",
@@ -157,6 +157,9 @@
 			"PageMax": {
 				"type": "string",
 				"defaultValue": "100"
+			},
+			"AdditionalOption": {
+				"type": "string"
 			}
 		},
 		"folder": {

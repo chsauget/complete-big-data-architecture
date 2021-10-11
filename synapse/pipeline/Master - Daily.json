@@ -5,7 +5,14 @@
 			{
 				"name": "EP - Badges",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Posts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -44,14 +51,22 @@
 						"Filter": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ",
 						"MaxDateQuery": "  SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
 						"Object": "posts",
-						"BackoffSeconds": "10500"
+						"BackoffSeconds": "10500",
+						"AdditionalOption": "&order=asc&sort=creation"
 					}
 				}
 			},
 			{
 				"name": "EP - Comments",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Posts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -74,7 +89,14 @@
 			{
 				"name": "EP - Tags",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Posts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -97,7 +119,14 @@
 			{
 				"name": "EP - Users",
 				"type": "ExecutePipeline",
-				"dependsOn": [],
+				"dependsOn": [
+					{
+						"activity": "EP - Posts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -121,7 +150,7 @@
 		"parameters": {
 			"BaseUrl": {
 				"type": "string",
-				"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+				"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}{additionalOption}"
 			}
 		},
 		"folder": {
