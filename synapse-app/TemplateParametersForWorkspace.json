@@ -46,6 +46,9 @@
 		},
 		"synapse-app-WorkspaceDefaultStorage_properties_typeProperties_url": {
 			"value": "https://synapselakeapp.dfs.core.windows.net"
+		},
+		"15Min_properties_pipeline_parameters_BaseUrl": {
+			"value": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}{additionalOption}"
 		}
 	}
 }
