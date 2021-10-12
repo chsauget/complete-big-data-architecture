@@ -7,6 +7,9 @@
 			"pipelineReference": {
 				"referenceName": "Master - Daily",
 				"type": "PipelineReference"
+			},
+			"parameters": {
+				"BaseUrl": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}{additionalOption}"
 			}
 		},
 		"type": "TumblingWindowTrigger",
