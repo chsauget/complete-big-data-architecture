@@ -58,7 +58,7 @@
 					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
 					"df.show(10)"
 				],
-				"execution_count": 18
+				"execution_count": 2
 			},
 			{
 				"cell_type": "code",
@@ -116,7 +116,26 @@
 					"\r\n",
 					"ds.show()"
 				],
-				"execution_count": 19
+				"execution_count": 3
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import tensorflow as tf\r\n",
+					"print([tf.__version__, tf.test.is_gpu_available()])"
+				],
+				"execution_count": 1
 			}
 		]
 	}
