@@ -2,7 +2,7 @@
 	"name": "Sentiment Analysis",
 	"properties": {
 		"folder": {
-			"name": "Archive"
+			"name": "NLP"
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
@@ -11,15 +11,15 @@
 			"type": "BigDataPoolReference"
 		},
 		"sessionProperties": {
-			"driverMemory": "56g",
-			"driverCores": 8,
-			"executorMemory": "56g",
-			"executorCores": 8,
-			"numExecutors": 4,
+			"driverMemory": "28g",
+			"driverCores": 4,
+			"executorMemory": "28g",
+			"executorCores": 4,
+			"numExecutors": 7,
 			"conf": {
 				"spark.dynamicAllocation.enabled": "false",
-				"spark.dynamicAllocation.minExecutors": "4",
-				"spark.dynamicAllocation.maxExecutors": "4"
+				"spark.dynamicAllocation.minExecutors": "7",
+				"spark.dynamicAllocation.maxExecutors": "7"
 			}
 		},
 		"metadata": {
@@ -64,7 +64,7 @@
 					"service_key = mssparkutils.credentials.getSecret(\"akv-app\", \"cognitive-key\", \"akv_app\")\r\n",
 					"\r\n",
 					"# Load the data into a Spark DataFrame\r\n",
-					"df = spark.sql(\"SELECT * FROM default.posts\")\r\n",
+					"df = spark.sql(\"SELECT * FROM SparkDwh.Posts\")\r\n",
 					"\r\n",
 					"sentiment = (TextSentiment()\r\n",
 					"    .setLocation(\"northeurope\")\r\n",
@@ -85,7 +85,7 @@
 					"\r\n",
 					""
 				],
-				"execution_count": 25
+				"execution_count": 1
 			},
 			{
 				"cell_type": "code",
