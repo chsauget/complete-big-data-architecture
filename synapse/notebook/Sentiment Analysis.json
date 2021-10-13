@@ -99,10 +99,14 @@
 							"deleting": false
 						}
 					},
+					"microsoft": {
+						"language": "sparksql"
+					},
 					"collapsed": true
 				},
 				"source": [
-					"spark.sql(\"DROP TABLE IF EXISTS PostsWithSentiments\"); \r\n",
+					"%%sql\r\n",
+					"DROP TABLE IF EXISTS PostsWithSentiments\r\n",
 					""
 				],
 				"execution_count": 23
