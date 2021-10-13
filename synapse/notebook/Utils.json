@@ -1,0 +1,129 @@
+{
+	"name": "Utils",
+	"properties": {
+		"folder": {
+			"name": "Utilities"
+		},
+		"nbformat": 4,
+		"nbformat_minor": 2,
+		"bigDataPool": {
+			"referenceName": "spark",
+			"type": "BigDataPoolReference"
+		},
+		"sessionProperties": {
+			"driverMemory": "56g",
+			"driverCores": 8,
+			"executorMemory": "56g",
+			"executorCores": 8,
+			"numExecutors": 1,
+			"conf": {
+				"spark.dynamicAllocation.enabled": "false",
+				"spark.dynamicAllocation.minExecutors": "1",
+				"spark.dynamicAllocation.maxExecutors": "1"
+			}
+		},
+		"metadata": {
+			"saveOutput": true,
+			"enableDebugMode": false,
+			"kernelspec": {
+				"name": "synapse_pyspark",
+				"display_name": "Synapse PySpark"
+			},
+			"language_info": {
+				"name": "python"
+			},
+			"a365ComputeOptions": {
+				"id": "/subscriptions/c24ef419-76bf-4265-bb0d-e3e3f3086be2/resourceGroups/complete-big-data-architecture/providers/Microsoft.Synapse/workspaces/synapse-app/bigDataPools/spark",
+				"name": "spark",
+				"type": "Spark",
+				"endpoint": "https://synapse-app.dev.azuresynapse.net/livyApi/versions/2019-11-01-preview/sparkPools/spark",
+				"auth": {
+					"type": "AAD",
+					"authResource": "https://dev.azuresynapse.net"
+				},
+				"sparkVersion": "2.4",
+				"nodeCount": 3,
+				"cores": 8,
+				"memory": 56,
+				"automaticScaleJobs": false
+			},
+			"sessionKeepAliveTimeout": 30
+		},
+		"cells": [
+			{
+				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "csharp"
+					}
+				},
+				"source": [
+					"%%csharp\r\n",
+					"using Microsoft.Spark.Extensions.Azure.Synapse.Analytics.Notebook.MSSparkUtils;\r\n",
+					"FS.Ls(\"/Full\")"
+				],
+				"execution_count": 14
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"import os\r\n",
+					"import py7zr\r\n",
+					"\r\n",
+					"mssparkutils.fs.ls('/')\r\n",
+					"\r\n",
+					""
+				],
+				"execution_count": 13
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"with py7zr.SevenZipFile('/StackOverflow/raw/History/7z/stackoverflow.com-Badges.7z', mode='r') as z:\r\n",
+					"    z.extractall(path=\"/tmp/\")"
+				],
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"os.listdir(\"/tmp\")"
+				],
+				"execution_count": 12
+			}
+		]
+	}
+}
