@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "ResourceGroupName": {
+            "type": "string",
+            "metadata": {
+                "description": "The RG Name"
+            }
+        },
+        "ResourceGroupLocation": {
+            "type": "string",
+            "metadata": {
+                "description": "The RG Region"
+            }
+        },
+        "AppFunctionName": {
+            "type": "string",
+            "metadata": {
+                "description": "The App Function name"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+            "name": "deploy-rg",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2021-04-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "relativePath": "resources/resource-group.json",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "ResourceGroupName": {
+                        "value": "[parameters('ResourceGroupName')]"
+                    },
+                    "ResourceGroupLocation": {
+                        "value": "[parameters('ResourceGroupLocation')]"
+                    }
+                }
+            }
+        }
+        ,{
+        "name": "deploy-function",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "relativePath": "ressources/function-premium.json",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {"AppFunctionName": {
+                "value": "[parameters('AppFunctionName')]"
+                }
+            }
+        }
+    }],
+    "outputs": {}
+}
