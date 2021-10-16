@@ -1,0 +1,1528 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "storageAccounts_synapselakeapp_name": {
+            "defaultValue": "synapselakeapp",
+            "type": "String"
+        },
+        "vaults_akv_app_name": {
+            "defaultValue": "akv-app",
+            "type": "String"
+        },"workspaces_synapse_app_name": {
+            "defaultValue": "synapse-app",
+            "type": "String"
+        },
+        "storageAccounts_mlapp3257323865_name": {
+            "defaultValue": "mlapp3257323865",
+            "type": "String"
+        },
+        "sites_net_core_for_big_data_premium_name": {
+            "defaultValue": "net-core-for-big-data-premium",
+            "type": "String"
+        },
+        "accounts_cognitive_app_name": {
+            "defaultValue": "cognitive-app",
+            "type": "String"
+        },
+        "components_net_core_for_big_data_name": {
+            "defaultValue": "net-core-for-big-data",
+            "type": "String"
+        },
+        "workspaces_ml_app_name": {
+            "defaultValue": "ml-app",
+            "type": "String"
+        },
+        "registries_containerrapp_name": {
+            "defaultValue": "containerrapp",
+            "type": "String"
+        },
+        "storageAccounts_storageaccountcompla181_name": {
+            "defaultValue": "storageaccountcompla181",
+            "type": "String"
+        },
+        "components_net_core_for_big_data_premium_name": {
+            "defaultValue": "net-core-for-big-data-premium",
+            "type": "String"
+        },
+        "streamingjobs_stream_analytics_app_name": {
+            "defaultValue": "stream-analytics-app",
+            "type": "String"
+        },
+        "serverfarms_ASP_completebigdataarchitecture_af73_name": {
+            "defaultValue": "ASP-completebigdataarchitecture-af73",
+            "type": "String"
+        },
+        "serverfarms_ASP_completebigdataarchitecture_af92_name": {
+            "defaultValue": "ASP-completebigdataarchitecture-af92",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.CognitiveServices/accounts",
+            "apiVersion": "2021-04-30",
+            "name": "[parameters('accounts_cognitive_app_name')]",
+            "location": "northeurope",
+            "sku": {
+                "name": "S0"
+            },
+            "kind": "CognitiveServices",
+            "properties": {
+                "apiProperties": {},
+                "customSubDomainName": "[parameters('accounts_cognitive_app_name')]",
+                "publicNetworkAccess": "Enabled"
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[parameters('vaults_akv_app_name')]",
+            "location": "northeurope",
+            "properties": {
+                "sku": {
+                    "family": "A",
+                    "name": "Standard"
+                },
+                "tenantId": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b",
+                "accessPolicies": [
+                    {
+                        "tenantId": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b",
+                        "objectId": "e87db7b2-4693-47fe-980b-749ab3324a6d",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "certificates": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore",
+                                "ManageContacts",
+                                "ManageIssuers",
+                                "GetIssuers",
+                                "ListIssuers",
+                                "SetIssuers",
+                                "DeleteIssuers"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b",
+                        "objectId": "a848c7a7-a581-46f4-b0dd-8164a63c66cc",
+                        "permissions": {
+                            "keys": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "secrets": [
+                                "Get",
+                                "List",
+                                "Set",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore"
+                            ],
+                            "certificates": [
+                                "Get",
+                                "List",
+                                "Update",
+                                "Create",
+                                "Import",
+                                "Delete",
+                                "Recover",
+                                "Backup",
+                                "Restore",
+                                "ManageContacts",
+                                "ManageIssuers",
+                                "GetIssuers",
+                                "ListIssuers",
+                                "SetIssuers",
+                                "DeleteIssuers"
+                            ]
+                        }
+                    },
+                    {
+                        "tenantId": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b",
+                        "objectId": "252696df-3876-4763-83e9-c7528c4e802e",
+                        "permissions": {
+                            "keys": [
+                                "all"
+                            ],
+                            "secrets": [
+                                "all"
+                            ],
+                            "certificates": [
+                                "all"
+                            ],
+                            "storage": []
+                        }
+                    }
+                ],
+                "enabledForDeployment": false,
+                "enabledForDiskEncryption": false,
+                "enabledForTemplateDeployment": false,
+                "enableSoftDelete": true,
+                "softDeleteRetentionInDays": 90,
+                "enableRbacAuthorization": false,
+                "enablePurgeProtection": true,
+                "vaultUri": "[concat('https://', parameters('vaults_akv_app_name'), '.vault.azure.net/')]",
+                "provisioningState": "Succeeded"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('storageAccounts_mlapp3257323865_name')]",
+            "location": "northeurope",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "isHnsEnabled": false,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('storageAccounts_storageaccountcompla181_name')]",
+            "location": "northeurope",
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "kind": "Storage",
+            "properties": {
+                "minimumTlsVersion": "TLS1_2",
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts",
+            "apiVersion": "2021-04-01",
+            "name": "[parameters('storageAccounts_synapselakeapp_name')]",
+            "location": "northeurope",
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "kind": "StorageV2",
+            "properties": {
+                "isHnsEnabled": true,
+                "networkAcls": {
+                    "bypass": "AzureServices",
+                    "virtualNetworkRules": [],
+                    "ipRules": [],
+                    "defaultAction": "Allow"
+                },
+                "supportsHttpsTrafficOnly": true,
+                "encryption": {
+                    "services": {
+                        "file": {
+                            "keyType": "Account",
+                            "enabled": true
+                        },
+                        "blob": {
+                            "keyType": "Account",
+                            "enabled": true
+                        }
+                    },
+                    "keySource": "Microsoft.Storage"
+                },
+                "accessTier": "Hot"
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[parameters('workspaces_synapse_app_name')]",
+            "location": "northeurope",
+            "identity": {
+                "principalId": "e87db7b2-4693-47fe-980b-749ab3324a6d",
+                "tenantId": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b",
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "defaultDataLakeStorage": {
+                    "accountUrl": "https://synapselakeapp.dfs.core.windows.net",
+                    "filesystem": "lake"
+                },
+                "encryption": {},
+                "connectivityEndpoints": {
+                    "web": "[concat('https://web.azuresynapse.net?workspace=%2fsubscriptions%2fc24ef419-76bf-4265-bb0d-e3e3f3086be2%2fresourceGroups%2fcomplete-big-data-architecture%2fproviders%2fMicrosoft.Synapse%2fworkspaces%2f', parameters('workspaces_synapse_app_name'))]",
+                    "dev": "[concat('https://', parameters('workspaces_synapse_app_name'), '.dev.azuresynapse.net')]",
+                    "sqlOnDemand": "[concat(parameters('workspaces_synapse_app_name'), '-ondemand.sql.azuresynapse.net')]",
+                    "sql": "[concat(parameters('workspaces_synapse_app_name'), '.sql.azuresynapse.net')]"
+                },
+                "managedResourceGroupName": "complete-big-data-architecture-synapse",
+                "sqlAdministratorLogin": "sqladminuser",
+                "privateEndpointConnections": [],
+                "workspaceRepositoryConfiguration": {
+                    "accountName": "chsauget",
+                    "collaborationBranch": "main",
+                    "lastCommitId": "c0eab6457db719ade91a64e2b0c357ee10d9b466",
+                    "repositoryName": "complete-big-data-architecture",
+                    "rootFolder": "/synapse",
+                    "type": "WorkspaceGitHubConfiguration"
+                },
+                "purviewConfiguration": {},
+                "publicNetworkAccess": "Enabled",
+                "cspWorkspaceAdminProperties": {
+                    "initialWorkspaceAdminObjectId": "a848c7a7-a581-46f4-b0dd-8164a63c66cc"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2021-01-15",
+            "name": "[parameters('serverfarms_ASP_completebigdataarchitecture_af73_name')]",
+            "location": "North Europe",
+            "sku": {
+                "name": "Y1",
+                "tier": "Dynamic",
+                "size": "Y1",
+                "family": "Y",
+                "capacity": 0
+            },
+            "kind": "functionapp",
+            "properties": {
+                "perSiteScaling": false,
+                "elasticScaleEnabled": false,
+                "maximumElasticWorkerCount": 1,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.Web/serverfarms",
+            "apiVersion": "2021-01-15",
+            "name": "[parameters('serverfarms_ASP_completebigdataarchitecture_af92_name')]",
+            "location": "North Europe",
+            "sku": {
+                "name": "EP1",
+                "tier": "ElasticPremium",
+                "size": "EP1",
+                "family": "EP",
+                "capacity": 1
+            },
+            "kind": "elastic",
+            "properties": {
+                "perSiteScaling": false,
+                "elasticScaleEnabled": true,
+                "maximumElasticWorkerCount": 6,
+                "isSpot": false,
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "targetWorkerCount": 0,
+                "targetWorkerSizeId": 0
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('vaults_akv_app_name'), '/cognitive-key')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_akv_app_name'))]"
+            ],
+            "properties": {
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('vaults_akv_app_name'), '/f1163531-c45b-4950-b9c7-c7ea31edc20b-GSOLPJWIGOWBdbDFvmmGr5ejsISPPuN8SBxJoLYOX6A')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_akv_app_name'))]"
+            ],
+            "properties": {
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('vaults_akv_app_name'), '/f1163531-c45b-4950-b9c7-c7ea31edc20b-VWj6-DAtkNDQSAnD3-TX92vFpzje1tKMPSmfCGmCEEQ')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_akv_app_name'))]"
+            ],
+            "properties": {
+                "attributes": {
+                    "enabled": true,
+                    "exp": 4790059000
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('vaults_akv_app_name'), '/f1163531-c45b-4950-b9c7-c7ea31edc20b-XoZQvJB9KuIISDV5zy2CK98O00MLyEB-kHKh-btL6qo')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_akv_app_name'))]"
+            ],
+            "properties": {
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.KeyVault/vaults/secrets",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('vaults_akv_app_name'), '/StackOverflow-api')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.KeyVault/vaults', parameters('vaults_akv_app_name'))]"
+            ],
+            "properties": {
+                "contentType": "JSON",
+                "attributes": {
+                    "enabled": true
+                }
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/computes",
+            "apiVersion": "2021-07-01",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/boum')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "disableLocalAuth": false,
+                "computeType": "ComputeInstance",
+                "computeLocation": "northeurope",
+                "properties": {
+                    "vmSize": "STANDARD_DS2_V2",
+                    "sshSettings": {
+                        "sshPublicAccess": "Disabled"
+                    },
+                    "applicationSharingPolicy": "Shared"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/datastores",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/workspaceartifactstore')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "contents": {
+                    "contentsType": "AzureBlob",
+                    "accountName": "mlapp3257323865",
+                    "containerName": "azureml",
+                    "endpoint": "core.windows.net",
+                    "protocol": "https",
+                    "credentials": {
+                        "credentialsType": "AccountKey"
+                    }
+                },
+                "isDefault": false,
+                "properties": {
+                    "ServiceDataAccessAuthIdentity": "None"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/datastores",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/workspaceblobstore')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "contents": {
+                    "contentsType": "AzureBlob",
+                    "accountName": "mlapp3257323865",
+                    "containerName": "azureml-blobstore-f1163531-c45b-4950-b9c7-c7ea31edc20b",
+                    "endpoint": "core.windows.net",
+                    "protocol": "https",
+                    "credentials": {
+                        "credentialsType": "AccountKey"
+                    }
+                },
+                "isDefault": true,
+                "properties": {
+                    "ServiceDataAccessAuthIdentity": "WorkspaceSystemAssignedIdentity"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/datastores",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/workspacefilestore')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "contents": {
+                    "contentsType": "AzureFile",
+                    "accountName": "mlapp3257323865",
+                    "containerName": "azureml-filestore-f1163531-c45b-4950-b9c7-c7ea31edc20b",
+                    "endpoint": "core.windows.net",
+                    "protocol": "https",
+                    "credentials": {
+                        "credentialsType": "AccountKey"
+                    }
+                },
+                "isDefault": false,
+                "properties": {
+                    "ServiceDataAccessAuthIdentity": "None"
+                }
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-DeepSpeed-0.3-GPU')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-Designer-Score')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-lightgbm-3.2-ubuntu18.04-py37-cpu')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-Minimal')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-minimal-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-mlflow-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-onnxruntime-1.6-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-PyTorch-1.3-CPU')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-PyTorch-1.6-CPU')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-PyTorch-1.6-GPU')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-pytorch-1.6-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-Pytorch1.7-Cuda11-OpenMpi4.1.0-py36')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-pytorch-1.7-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-pytorch-1.7-ubuntu18.04-py37-cuda11-gpu')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-pytorch-1.8-ubuntu18.04-py37-cuda11-gpu')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-pytorch-1.9-ubuntu18.04-py37-cuda11-gpu')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-Scikit-learn0.24-Cuda11-OpenMpi4.1.0-py36')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-sklearn-0.24.1-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-sklearn-0.24-ubuntu18.04-py37-cpu')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-tensorflow-1.15-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-TensorFlow-2.3-CPU')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-TensorFlow-2.3-GPU')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-TensorFlow2.4-Cuda11-OpenMpi4.1.0-py36')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-tensorflow-2.4-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11.0.3-gpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-tensorflow-2.4-ubuntu18.04-py37-cuda11-gpu')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-Triton')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-tritonserver-21.02-py38-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-Tutorial')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-VowpalWabbit-8.8.0')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/environments",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/AzureML-xgboost-0.9-ubuntu18.04-py37-cpu-inference')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "properties": {},
+                "tags": {}
+            }
+        },
+        {
+            "type": "Microsoft.MachineLearningServices/workspaces/models",
+            "apiVersion": "2021-03-01-preview",
+            "name": "[concat(parameters('workspaces_ml_app_name'), '/nyc_taxi_tip_predict')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.MachineLearningServices/workspaces', parameters('workspaces_ml_app_name'))]"
+            ],
+            "properties": {
+                "tags": {},
+                "properties": {}
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_mlapp3257323865_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_mlapp3257323865_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": [
+                        {
+                            "allowedOrigins": [
+                                "https://mlworkspace.azure.ai",
+                                "https://ml.azure.com",
+                                "https://*.ml.azure.com"
+                            ],
+                            "allowedMethods": [
+                                "GET",
+                                "HEAD"
+                            ],
+                            "maxAgeInSeconds": 1800,
+                            "exposedHeaders": [
+                                "*"
+                            ],
+                            "allowedHeaders": [
+                                "*"
+                            ]
+                        }
+                    ]
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_storageaccountcompla181_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountcompla181_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/blobServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_synapselakeapp_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_synapselakeapp_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                },
+                "deleteRetentionPolicy": {
+                    "enabled": false
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_mlapp3257323865_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_mlapp3257323865_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_storageaccountcompla181_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountcompla181_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_LRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/fileServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_synapselakeapp_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_synapselakeapp_name'))]"
+            ],
+            "sku": {
+                "name": "Standard_RAGRS",
+                "tier": "Standard"
+            },
+            "properties": {
+                "protocolSettings": {
+                    "smb": {}
+                },
+                "cors": {
+                    "corsRules": []
+                },
+                "shareDeleteRetentionPolicy": {
+                    "enabled": true,
+                    "days": 7
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_mlapp3257323865_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_mlapp3257323865_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_storageaccountcompla181_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountcompla181_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/queueServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_synapselakeapp_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_synapselakeapp_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_mlapp3257323865_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_mlapp3257323865_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_storageaccountcompla181_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_storageaccountcompla181_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Storage/storageAccounts/tableServices",
+            "apiVersion": "2021-04-01",
+            "name": "[concat(parameters('storageAccounts_synapselakeapp_name'), '/default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Storage/storageAccounts', parameters('storageAccounts_synapselakeapp_name'))]"
+            ],
+            "properties": {
+                "cors": {
+                    "corsRules": []
+                }
+            }
+        },
+        {
+            "type": "Microsoft.StreamAnalytics/streamingjobs/inputs",
+            "apiVersion": "2020-03-01",
+            "name": "[concat(parameters('streamingjobs_stream_analytics_app_name'), '/comments')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.StreamAnalytics/streamingjobs', parameters('streamingjobs_stream_analytics_app_name'))]"
+            ],
+            "properties": {
+                "type": "Stream",
+                "datasource": {
+                    "type": "Microsoft.EventHub/EventHub",
+                    "properties": {
+                        "eventHubName": "comments-hub",
+                        "serviceBusNamespace": "eventhub-app",
+                        "sharedAccessPolicyName": "stream-analytics-app_comments_policy",
+                        "authenticationMode": "ConnectionString"
+                    }
+                },
+                "compression": {
+                    "type": "None"
+                },
+                "serialization": {
+                    "type": "Json",
+                    "properties": {
+                        "encoding": "UTF8"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.StreamAnalytics/streamingjobs/outputs",
+            "apiVersion": "2020-03-01",
+            "name": "[concat(parameters('streamingjobs_stream_analytics_app_name'), '/pbi-comments')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.StreamAnalytics/streamingjobs', parameters('streamingjobs_stream_analytics_app_name'))]"
+            ],
+            "properties": {
+                "datasource": {
+                    "type": "PowerBI",
+                    "properties": {
+                        "authenticationMode": "UserToken",
+                        "dataset": "comments",
+                        "table": "comments",
+                        "groupName": "Mon espace de travail",
+                        "tokenUserPrincipalName": "contact@sauget-ch.fr",
+                        "tokenUserDisplayName": "Charles-Henri Sauget"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.StreamAnalytics/streamingjobs/outputs",
+            "apiVersion": "2020-03-01",
+            "name": "[concat(parameters('streamingjobs_stream_analytics_app_name'), '/raw-comments')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.StreamAnalytics/streamingjobs', parameters('streamingjobs_stream_analytics_app_name'))]"
+            ],
+            "properties": {
+                "datasource": {
+                    "type": "Microsoft.Storage/Blob",
+                    "properties": {
+                        "storageAccounts": [
+                            {
+                                "accountName": "synapselakeapp"
+                            }
+                        ],
+                        "container": "lake",
+                        "pathPattern": "StackOverflow/raw/comments/{date}/{time}",
+                        "dateFormat": "yyyy/MM/dd",
+                        "timeFormat": "HH",
+                        "authenticationMode": "ConnectionString"
+                    }
+                },
+                "timeWindow": "00:05:00",
+                "sizeWindow": 2000,
+                "serialization": {
+                    "type": "Parquet",
+                    "properties": {}
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/auditingSettings",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/Default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "retentionDays": 0,
+                "auditActionsAndGroups": [],
+                "isStorageSecondaryKeyInUse": false,
+                "isAzureMonitorTargetEnabled": false,
+                "state": "Disabled",
+                "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/bigDataPools",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/spark')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "creationDate": "2021-04-17T17:46:44.3433333Z",
+                "sparkVersion": "2.4",
+                "nodeCount": 3,
+                "nodeSize": "Medium",
+                "nodeSizeFamily": "MemoryOptimized",
+                "autoScale": {
+                    "enabled": true,
+                    "minNodeCount": 3,
+                    "maxNodeCount": 4
+                },
+                "autoPause": {
+                    "enabled": true,
+                    "delayInMinutes": 30
+                },
+                "isComputeIsolationEnabled": false,
+                "libraryRequirements": {
+                    "filename": "requirements.txt",
+                    "content": "spark-nlp==2.7.2\r\npy7zr"
+                },
+                "customLibraries": [
+                    {
+                        "name": "spark-xml_2.11-0.12.0.jar",
+                        "path": "synapse-app/libraries/spark-xml_2.11-0.12.0.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    },
+                    {
+                        "name": "spark-nlp_2.11-2.7.5.jar",
+                        "path": "synapse-app/libraries/spark-nlp_2.11-2.7.5.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    },
+                    {
+                        "name": "json4s-jackson_2.11-3.7.0-M7.jar",
+                        "path": "synapse-app/libraries/json4s-jackson_2.11-3.7.0-M7.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    },
+                    {
+                        "name": "json4s-ext_2.11-3.7.0-M7.jar",
+                        "path": "synapse-app/libraries/json4s-ext_2.11-3.7.0-M7.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    },
+                    {
+                        "name": "json4s-native_2.11-3.7.0-M7.jar",
+                        "path": "synapse-app/libraries/json4s-native_2.11-3.7.0-M7.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    },
+                    {
+                        "name": "tensorflow-core-platform-0.3.3.jar",
+                        "path": "synapse-app/libraries/tensorflow-core-platform-0.3.3.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    }
+                ],
+                "sessionLevelPackagesEnabled": false,
+                "cacheSize": 0,
+                "dynamicExecutorAllocation": {
+                    "enabled": true
+                },
+                "provisioningState": "Succeeded"
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/bigDataPools",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/spark3')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "creationDate": "2021-09-18T13:15:56.93Z",
+                "sparkVersion": "3.1",
+                "nodeCount": 0,
+                "nodeSize": "Small",
+                "nodeSizeFamily": "MemoryOptimized",
+                "autoScale": {
+                    "enabled": true,
+                    "minNodeCount": 3,
+                    "maxNodeCount": 10
+                },
+                "autoPause": {
+                    "enabled": true,
+                    "delayInMinutes": 15
+                },
+                "isComputeIsolationEnabled": false,
+                "customLibraries": [
+                    {
+                        "name": "spark-xml_2.10-0.2.0.jar",
+                        "path": "synapse-app/libraries/spark-xml_2.10-0.2.0.jar",
+                        "containerName": "prep",
+                        "type": "jar"
+                    }
+                ],
+                "sessionLevelPackagesEnabled": true,
+                "cacheSize": 0,
+                "dynamicExecutorAllocation": {
+                    "enabled": false
+                },
+                "provisioningState": "DeleteError"
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/extendedAuditingSettings",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/Default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "retentionDays": 0,
+                "auditActionsAndGroups": [],
+                "isStorageSecondaryKeyInUse": false,
+                "isAzureMonitorTargetEnabled": false,
+                "state": "Disabled",
+                "storageAccountSubscriptionId": "00000000-0000-0000-0000-000000000000"
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/firewallRules",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/allowAll')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "startIpAddress": "0.0.0.0",
+                "endIpAddress": "255.255.255.255"
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/integrationruntimes",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/AutoResolveIntegrationRuntime')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "type": "Managed",
+                "typeProperties": {
+                    "computeProperties": {
+                        "location": "AutoResolve"
+                    }
+                }
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/securityAlertPolicies",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/Default')]",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "properties": {
+                "state": "Disabled",
+                "disabledAlerts": [
+                    ""
+                ],
+                "emailAddresses": [
+                    ""
+                ],
+                "emailAccountAdmins": false,
+                "retentionDays": 0
+            }
+        },
+        {
+            "type": "Microsoft.Synapse/workspaces/sqlPools",
+            "apiVersion": "2021-06-01-preview",
+            "name": "[concat(parameters('workspaces_synapse_app_name'), '/sqdw')]",
+            "location": "northeurope",
+            "dependsOn": [
+                "[resourceId('Microsoft.Synapse/workspaces', parameters('workspaces_synapse_app_name'))]"
+            ],
+            "sku": {
+                "name": "DW100c",
+                "capacity": 0
+            },
+            "properties": {
+                "status": "Paused",
+                "maxSizeBytes": 263882790666240,
+                "collation": "SQL_Latin1_General_CP1_CI_AS",
+                "restorePointInTime": "0001-01-01T00:00:00",
+                "creationDate": "2021-05-28T16:57:14.383Z",
+                "storageAccountType": "GRS",
+                "provisioningState": "Succeeded"
+            }
+        },
+        {
+            "type": "Microsoft.Web/sites",
+            "apiVersion": "2021-01-15",
+            "name": "[parameters('sites_net_core_for_big_data_premium_name')]",
+            "location": "North Europe",
+            "dependsOn": [
+                "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_completebigdataarchitecture_af92_name'))]"
+            ],
+            "kind": "functionapp",
+            "identity": {
+                "principalId": "ac54c4da-b6ba-49ff-bcdd-5da1208278cd",
+                "tenantId": "01cad88a-b9c8-4c54-ad8d-c6920c250e4b",
+                "type": "SystemAssigned"
+            },
+            "properties": {
+                "enabled": true,
+                "hostNameSslStates": [
+                    {
+                        "name": "[concat(parameters('sites_net_core_for_big_data_premium_name'), '.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Standard"
+                    },
+                    {
+                        "name": "[concat(parameters('sites_net_core_for_big_data_premium_name'), '.scm.azurewebsites.net')]",
+                        "sslState": "Disabled",
+                        "hostType": "Repository"
+                    }
+                ],
+                "serverFarmId": "[resourceId('Microsoft.Web/serverfarms', parameters('serverfarms_ASP_completebigdataarchitecture_af92_name'))]",
+                "reserved": false,
+                "isXenon": false,
+                "hyperV": false,
+                "siteConfig": {
+                    "numberOfWorkers": 1,
+                    "acrUseManagedIdentityCreds": false,
+                    "alwaysOn": false,
+                    "http20Enabled": false,
+                    "functionAppScaleLimit": 0,
+                    "minimumElasticInstanceCount": 1
+                },
+                "scmSiteAlsoStopped": false,
+                "clientAffinityEnabled": false,
+                "clientCertEnabled": false,
+                "clientCertMode": "Required",
+                "hostNamesDisabled": false,
+                "customDomainVerificationId": "0BD61098320D86A3941E36CF9EA72944C4F90566AFA0363EC903E900922A74C7",
+                "containerSize": 1536,
+                "dailyMemoryTimeQuota": 0,
+                "httpsOnly": false,
+                "redundancyMode": "None",
+                "storageAccountRequired": false,
+                "keyVaultReferenceIdentity": "SystemAssigned"
+            }
+        }
+        
+    ]
+}

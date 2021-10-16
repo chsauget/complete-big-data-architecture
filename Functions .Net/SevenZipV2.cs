@@ -43,57 +43,60 @@ namespace Company.Function
             response.StatusCode = 200;
             response.ContentType = "application/json-data-stream";
             await response.Body.WriteAsync(Encoding.UTF8.GetBytes("["));
-
+            
             using (var archive = SevenZipArchive.Open(ReadStream, null))
             {
                 //Retrieve uncompressed Stream
                 IArchiveEntry e = archive.Entries.FirstOrDefault(); 
                 var un7ZipStream = e.OpenEntryStream();
-
+                log.LogInformation($"Stream Opened {filename}");
                 XmlReaderSettings settings = new XmlReaderSettings();
                 settings.Async = true;
+                settings.IgnoreWhitespace = true;
+                
                 using (XmlReader reader = XmlReader.Create(un7ZipStream, settings))
                 {
                     bool keepReading = reader.Read();
                     bool firstrow = true;
                     while(keepReading)
                     {
-                        try
+
+                        if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
+                        {
+
+                            dynamic exo = new ExpandoObject();   
+                            for (int attInd = 0; attInd < reader.AttributeCount; attInd++){
+                                    
+                                reader.MoveToAttribute( attInd );
+                                ((IDictionary<String, Object>)exo).Add(reader.Name, reader.Value);
+                                    /*if(reader.Name == "Id"&&int.Parse(reader.Value)%1000==0)
+                                    {
+                                        log.LogInformation(reader.Value);
+                                    }  */
+                                }
+                            await response.Body.WriteAsync(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(exo)));
+                
+                        }
+                        
+                        if(reader.Read())
                         {
                             if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
                             {
-
-                                dynamic exo = new ExpandoObject();   
-                                for (int attInd = 0; attInd < reader.AttributeCount; attInd++){
-                                        
-                                    reader.MoveToAttribute( attInd );
-                                    ((IDictionary<String, Object>)exo).Add(reader.Name, reader.Value);
-                                    }
-                                await response.Body.WriteAsync(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(exo)));
-                                                    
-                            }
-                            if(reader.Read())
-                            {
-                                if((reader.NodeType == XmlNodeType.Element) && (reader.Name == "row") && reader.HasAttributes)
+                                if(!firstrow)
                                 {
-                                    if(!firstrow)
-                                    {
-                                        await response.Body.WriteAsync(Encoding.UTF8.GetBytes(","));
-                                    }
-                                    else
-                                    {
-                                        firstrow=false;
-                                    }
+                                    await response.Body.WriteAsync(Encoding.UTF8.GetBytes(","));
+                                }
+                                else
+                                {
+                                    firstrow=false;
                                 }
                             }
-                            else
-                            {
-                                keepReading = false;
-                            }  
-                        }catch(Exception ex)
-                        {
-                            log.LogInformation(ex.Message);
                         }
+                        else
+                        {
+                            keepReading = false;
+                        }  
+
                     }
                 }
 
