@@ -1,5 +1,5 @@
 {
-	"name": "Daily - Tags",
+	"name": "Daily - Posts",
 	"properties": {
 		"folder": {
 			"name": "StackOverflow"
@@ -62,11 +62,11 @@
 					"from pyspark.sql.functions import *\r\n",
 					"from pyspark.sql.types import *\r\n",
 					"lakepath = \"abfss://lake@synapselakeapp.dfs.core.windows.net/StackOverflow/\"\r\n",
-					"rawpath = \"raw/Daily/tags/*/*.json\"\r\n",
+					"rawpath = \"raw/Daily/posts/*/*.json\"\r\n",
 					"goldpath = \"gold/\"\r\n",
-					"tableName = \"Tags\""
+					"tableName = \"Posts\""
 				],
-				"execution_count": 56
+				"execution_count": 9
 			},
 			{
 				"cell_type": "code",
@@ -90,7 +90,7 @@
 					"df_json = spark.read.json(lakepath+rawpath)\n",
 					"display(df_json.limit(3))"
 				],
-				"execution_count": 57
+				"execution_count": 10
 			},
 			{
 				"cell_type": "code",
@@ -107,58 +107,24 @@
 					"collapsed": false
 				},
 				"source": [
-					"df_flat = df_json.select(explode_outer(\"items\")).select(\"col.name\", \"col.count\").distinct() #duplicates in dataset\n",
+					"df_flat = df_json.select(explode_outer(\"items\")) \\\n",
+					"    .select(\"col.body\", \n",
+					"        \"col.last_activity_date\",\n",
+					"        \"col.up_vote_count\",\n",
+					"        \"col.post_id\",\n",
+					"        \"col.score\",\n",
+					"        \"col.title\",\n",
+					"        \"col.creation_date\"\n",
+					"    )  #duplicates in dataset\n",
+					"\n",
+					"df_flat = df_flat.withColumn(\"_CreationDateTime\", df_flat[\"creation_date\"].cast(TimestampType())) \\\n",
+					"    .withColumn(\"_LastActivityDate\", date_format(df_flat[\"last_activity_date\"].cast(TimestampType()),\"yyyy-MM-dd\")) \\\n",
+					"    .withColumn(\"_PartitionDate\", date_format(df_flat[\"creation_date\"].cast(TimestampType()),\"yyyy-MM-dd\")) \\\n",
+					"    .distinct()\n",
+					"\n",
 					"display(df_flat.limit(3))"
 				],
-				"execution_count": 58
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					}
-				},
-				"source": [
-					"historypath = \"raw/History/Parquet/\"\n",
-					"tableName = 'Tags'\n",
-					"\n",
-					"df = spark.read.load(lakepath+historypath+'/stackoverflow.com-'+tableName+'.parquet', format='parquet')\n",
-					"\n",
-					"df.write.format(\"delta\").mode(\"overwrite\").save(lakepath+goldpath+tableName)\n",
-					"\n",
-					"spark.sql(\"CREATE TABLE IF NOT EXISTS SparkDwh.{0} USING DELTA LOCATION '{1}'\".format(tableName,lakepath+goldpath+tableName))"
-				],
-				"execution_count": 59
-			},
-			{
-				"cell_type": "code",
-				"metadata": {
-					"jupyter": {
-						"source_hidden": false,
-						"outputs_hidden": false
-					},
-					"nteract": {
-						"transient": {
-							"deleting": false
-						}
-					},
-					"microsoft": {
-						"language": "sparksql"
-					},
-					"collapsed": false
-				},
-				"source": [
-					"%%sql\n",
-					"SELECT * FROM sparkdwh.Tags WHERE TagName = \"javascript\""
-				],
-				"execution_count": 60
+				"execution_count": 36
 			},
 			{
 				"cell_type": "code",
@@ -178,19 +144,30 @@
 					"\n",
 					"deltaTable = DeltaTable.forPath(spark, lakepath+goldpath+tableName)\n",
 					"\n",
-					"deltaTable.alias(\"tags\").merge(\n",
+					"deltaTable.alias(tableName).merge(\n",
 					"    df_flat.alias(\"updates\"),\n",
-					"    \"tags.TagName = updates.name\") \\\n",
-					"  .whenMatchedUpdate(set = { \"Count\" : \"updates.count\" } ) \\\n",
+					"    tableName+\".Id = updates.post_id\") \\\n",
+					"  .whenMatchedUpdate(set = \n",
+					"    { \n",
+					"      \"Body\" : \"updates.body\",\n",
+					"      \"FavoriteCount\" : \"updates.up_vote_count\",\n",
+					"      \"Score\" : \"updates.score\",\n",
+					"      \"LastActivityDate\" : \"updates._LastActivityDate\"\n",
+					"    } \n",
+					"  ) \\\n",
 					"  .whenNotMatchedInsert(values =\n",
 					"    {\n",
-					"      \"TagName\": \"updates.name\",\n",
-					"      \"Count\": \"updates.count\"\n",
+					"      \"Body\" : \"updates.body\",\n",
+					"      \"FavoriteCount\" : \"updates.up_vote_count\",\n",
+					"      \"Score\" : \"updates.score\",\n",
+					"      \"CreationDateTime\": \"updates._CreationDateTime\",\n",
+					"      \"LastActivityDate\" : \"updates._LastActivityDate\",\n",
+					"      \"PartitionDate\": \"updates._PartitionDate\"\n",
 					"    }\n",
 					"  ) \\\n",
 					"  .execute()"
 				],
-				"execution_count": 61
+				"execution_count": 37
 			},
 			{
 				"cell_type": "code",
@@ -203,17 +180,30 @@
 						"transient": {
 							"deleting": false
 						}
-					},
-					"microsoft": {
-						"language": "sparksql"
-					},
-					"collapsed": false
+					}
 				},
 				"source": [
-					"%%sql\n",
-					"SELECT * FROM sparkdwh.Tags WHERE TagName = \"javascript\""
+					"deltaTable.delete(\"PartitionDate IS NULL\") "
 				],
-				"execution_count": 62
+				"execution_count": null
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"deltaTable.delete(\"CreationDateTime > '2021-09-05 06:23:00'\") "
+				],
+				"execution_count": 38
 			}
 		]
 	}

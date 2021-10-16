@@ -8,13 +8,16 @@
 		"parameters": {
 			"UrlQuery": {
 				"type": "string"
+			},
+			"PageMax": {
+				"type": "string"
 			}
 		},
 		"annotations": [],
 		"type": "RestResource",
 		"typeProperties": {
 			"relativeUrl": {
-				"value": "StackOverflowWrapper?urlquery=@{encodeUriComponent(dataset().UrlQuery)}",
+				"value": "StackOverflowWrapper?urlquery=@{encodeUriComponent(dataset().UrlQuery)}&pagemax=@{dataset().PageMax}",
 				"type": "Expression"
 			}
 		},
