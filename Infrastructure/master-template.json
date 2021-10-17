@@ -1,23 +1,21 @@
 {
-    "$schema": "https://schema.management.azure.com/schemas/2018-05-01/subscriptionDeploymentTemplate.json",
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
     "contentVersion": "1.0.0.0",
     "parameters": {
-        "ResourceGroupName": {
+        "FunctionFarmName": {
             "type": "string",
             "metadata": {
-                "description": "The RG Name"
+                "description": "Elastic Plan Name"
             }
-        },
-        "ResourceGroupLocation": {
+        },"FunctionStorageName": {
             "type": "string",
             "metadata": {
-                "description": "The RG Region"
+                "description": "description"
             }
-        },
-        "AppFunctionName": {
+        },"FunctionName": {
             "type": "string",
             "metadata": {
-                "description": "The App Function name"
+                "description": "description"
             }
         }
     },
@@ -25,37 +23,23 @@
     "variables": {},
     "resources": [
         {
-            "name": "deploy-rg",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2021-04-01",
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "relativePath": "resources/resource-group.json",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "ResourceGroupName": {
-                        "value": "[parameters('ResourceGroupName')]"
-                    },
-                    "ResourceGroupLocation": {
-                        "value": "[parameters('ResourceGroupLocation')]"
-                    }
-                }
-            }
-        }
-        ,{
         "name": "deploy-function",
         "type": "Microsoft.Resources/deployments",
         "apiVersion": "2021-04-01",
         "properties": {
             "mode": "Incremental",
             "templateLink": {
-                "relativePath": "ressources/function-premium.json",
+                "relativePath": "resources/function-premium.json",
                 "contentVersion": "1.0.0.0"
             },
-            "parameters": {"AppFunctionName": {
-                "value": "[parameters('AppFunctionName')]"
+            "parameters": {"FunctionName": {
+                "value": "[parameters('FunctionName')]"
+                },
+                "FunctionFarmName": {
+                "value": "[parameters('FunctionFarmName')]"
+                },
+                "FunctionStorageName": {
+                "value": "[parameters('FunctionStorageName')]"
                 }
             }
         }
