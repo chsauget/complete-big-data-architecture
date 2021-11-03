@@ -1,8 +1,8 @@
 {
-	"name": "NLP - Clean Post",
+	"name": "Utils",
 	"properties": {
 		"folder": {
-			"name": "NLP"
+			"name": "Utilities"
 		},
 		"nbformat": 4,
 		"nbformat_minor": 2,
@@ -52,13 +52,17 @@
 		"cells": [
 			{
 				"cell_type": "code",
+				"metadata": {
+					"microsoft": {
+						"language": "csharp"
+					}
+				},
 				"source": [
-					"import sparknlp\r\n",
-					"\r\n",
-					"df = spark.sql(\"SELECT * FROM `sparkdwh`.`posts`\")\r\n",
-					"df.show(10)"
+					"%%csharp\r\n",
+					"using Microsoft.Spark.Extensions.Azure.Synapse.Analytics.Notebook.MSSparkUtils;\r\n",
+					"FS.Ls(\"/Full\")"
 				],
-				"execution_count": 2
+				"execution_count": 14
 			},
 			{
 				"cell_type": "code",
@@ -74,47 +78,31 @@
 					}
 				},
 				"source": [
-					"from sparknlp.base import *\r\n",
-					"from sparknlp.annotator import *\r\n",
-					"from pyspark.ml import Pipeline\r\n",
-					"from sparknlp.pretrained import PretrainedPipeline\r\n",
+					"import os\r\n",
+					"import py7zr\r\n",
 					"\r\n",
+					"mssparkutils.fs.ls('/')\r\n",
 					"\r\n",
-					"documentAssembler = DocumentAssembler() \\\r\n",
-					"    .setInputCol('Body') \\\r\n",
-					"    .setOutputCol('BodyClean')\r\n",
-					"\r\n",
-					"cleanUpPatterns = [\"<[^>]*>\"]\r\n",
-					"\r\n",
-					"documentNormalizer = DocumentNormalizer() \\\r\n",
-					"    .setInputCols(\"BodyClean\") \\\r\n",
-					"    .setOutputCol(\"normalizedBody\") \\\r\n",
-					"    .setAction(\"clean\") \\\r\n",
-					"    .setPatterns(cleanUpPatterns) \\\r\n",
-					"    .setReplacement(\" \") \\\r\n",
-					"    .setPolicy(\"pretty_all\") \\\r\n",
-					"    .setLowercase(True)\r\n",
-					"\r\n",
-					"useEmbeddings = UniversalSentenceEncoder.pretrained() \\\r\n",
-					"    .setInputCols([\"normalizedBody\"]) \\\r\n",
-					"    .setOutputCol(\"sentence_embeddings\")\r\n",
-					"sentiment = SentimentDLModel.pretrained(\"sentimentdl_use_twitter\") \\\r\n",
-					"    .setInputCols([\"sentence_embeddings\"]) \\\r\n",
-					"    .setThreshold(0.7) \\\r\n",
-					"    .setOutputCol(\"sentiment\")\r\n",
-					"\r\n",
-					"docPatternRemoverPipeline = \\\r\n",
-					"  Pipeline() \\\r\n",
-					"    .setStages([\r\n",
-					"        documentAssembler,\r\n",
-					"        documentNormalizer,\r\n",
-					"        useEmbeddings,\r\n",
-					"        sentiment\r\n",
-					"    ])\r\n",
-					"\r\n",
-					"ds = docPatternRemoverPipeline.fit(df).transform(df)\r\n",
-					"\r\n",
-					"ds.show()"
+					""
+				],
+				"execution_count": 13
+			},
+			{
+				"cell_type": "code",
+				"metadata": {
+					"jupyter": {
+						"source_hidden": false,
+						"outputs_hidden": false
+					},
+					"nteract": {
+						"transient": {
+							"deleting": false
+						}
+					}
+				},
+				"source": [
+					"with py7zr.SevenZipFile('/StackOverflow/raw/History/7z/stackoverflow.com-Badges.7z', mode='r') as z:\r\n",
+					"    z.extractall(path=\"/tmp/\")"
 				],
 				"execution_count": null
 			},
@@ -132,10 +120,9 @@
 					}
 				},
 				"source": [
-					"import tensorflow as tf\r\n",
-					"print([tf.__version__, tf.test.is_gpu_available()])"
+					"os.listdir(\"/tmp\")"
 				],
-				"execution_count": 1
+				"execution_count": 12
 			}
 		]
 	}

@@ -1,0 +1,48 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "FunctionFarmName": {
+            "type": "string",
+            "metadata": {
+                "description": "Elastic Plan Name"
+            }
+        },"FunctionStorageName": {
+            "type": "string",
+            "metadata": {
+                "description": "description"
+            }
+        },"FunctionName": {
+            "type": "string",
+            "metadata": {
+                "description": "description"
+            }
+        }
+    },
+    "functions": [],
+    "variables": {},
+    "resources": [
+        {
+        "name": "deploy-function",
+        "type": "Microsoft.Resources/deployments",
+        "apiVersion": "2021-04-01",
+        "properties": {
+            "mode": "Incremental",
+            "templateLink": {
+                "relativePath": "resources/function-premium.json",
+                "contentVersion": "1.0.0.0"
+            },
+            "parameters": {"FunctionName": {
+                "value": "[parameters('FunctionName')]"
+                },
+                "FunctionFarmName": {
+                "value": "[parameters('FunctionFarmName')]"
+                },
+                "FunctionStorageName": {
+                "value": "[parameters('FunctionStorageName')]"
+                }
+            }
+        }
+    }],
+    "outputs": {}
+}

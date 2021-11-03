@@ -44,6 +44,8 @@ namespace Company.Function
                 
             
                 string urlquery = req.Query["urlquery"];
+                int pageMax;
+                int.TryParse(req.Query["pagemax"],out pageMax);
                 log.LogInformation(urlquery);
                 
                 StackOverflowDTO so = await GetAsyncRetryPolicy(log).ExecuteAsync(() => GetStackOverflowData(urlquery) );
@@ -56,7 +58,9 @@ namespace Company.Function
                     Uri uri = new Uri(urlquery);
                     var queryParts = HttpUtility.ParseQueryString(urlquery);
                     queryParts["page"] = (int.Parse(queryParts["page"])+1).ToString();
-                    so.nextLink =  queryParts.ToString();
+                    
+                    so.nextLink = pageMax >= int.Parse(queryParts["page"]) ? queryParts.ToString() : null;
+                    log.LogInformation($"Page max : {int.Parse(queryParts["page"])}/{pageMax} ");
                 }
                 return new OkObjectResult(so);
             }catch(Exception e)

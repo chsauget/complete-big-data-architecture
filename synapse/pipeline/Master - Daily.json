@@ -5,14 +5,7 @@
 			{
 				"name": "EP - Badges",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Tags",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -35,14 +28,7 @@
 			{
 				"name": "EP - Posts",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Tags",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -58,21 +44,15 @@
 						"Filter": "!szxl1GZm4qbFlUGgI0mO90EuDDF)HfQ",
 						"MaxDateQuery": "  SELECT [LastDate] = CAST(DATEDIFF(SECOND, '1970-01-01',MAX([CreationDateTime])) AS VARCHAR)\n  FROM [dwh].[Posts]",
 						"Object": "posts",
-						"BackoffSeconds": "10500"
+						"BackoffSeconds": "10500",
+						"AdditionalOption": "&order=asc&sort=creation"
 					}
 				}
 			},
 			{
 				"name": "EP - Comments",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Tags",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -118,14 +98,7 @@
 			{
 				"name": "EP - Users",
 				"type": "ExecutePipeline",
-				"dependsOn": [
-					{
-						"activity": "EP - Tags",
-						"dependencyConditions": [
-							"Succeeded"
-						]
-					}
-				],
+				"dependsOn": [],
 				"userProperties": [],
 				"typeProperties": {
 					"pipeline": {
@@ -144,12 +117,147 @@
 						"BackoffSeconds": "10000"
 					}
 				}
+			},
+			{
+				"name": "NTBK - Merge Posts",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "EP - Posts",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Daily - Posts",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
+				}
+			},
+			{
+				"name": "NTBK - Merge Badges",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "EP - Badges",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Daily - Posts",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
+				}
+			},
+			{
+				"name": "NTBK - Merge Comments",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "EP - Comments",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Daily - Posts",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
+				}
+			},
+			{
+				"name": "NTBK - Merge Tags",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "EP - Tags",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Daily - Posts",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
+				}
+			},
+			{
+				"name": "NTBK - Merge Users",
+				"type": "SynapseNotebook",
+				"dependsOn": [
+					{
+						"activity": "EP - Users",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.01:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebook": {
+						"referenceName": "Daily - Posts",
+						"type": "NotebookReference"
+					},
+					"snapshot": true
+				}
 			}
 		],
 		"parameters": {
 			"BaseUrl": {
 				"type": "string",
-				"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}"
+				"defaultValue": "https://api.stackexchange.com/2.3/{object}?site=stackoverflow&key={key}&access_token={access_token}&filter={filter}&pagesize=100&page=1&fromdate={date}{additionalOption}"
 			}
 		},
 		"folder": {
